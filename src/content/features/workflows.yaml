@@ -1,0 +1,15 @@
+id: workflows
+name: Workflows
+outcome: automation
+status: shipped
+headline: Several steps, one request
+summary: >
+  Chain steps and helpers into a workflow you can launch, schedule, and watch
+  run node by node.
+detail: >
+  Build a workflow in a form, not a config file: which helpers run, in what
+  order, with what inputs. Launch it from chat or on a schedule and watch
+  each step complete live. Finished runs are kept so you can see what
+  happened.
+screenshot: automations.png
+requires: []

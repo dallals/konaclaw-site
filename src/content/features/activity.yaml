@@ -1,0 +1,15 @@
+id: activity
+name: Activity
+outcome: automation
+status: shipped
+headline: See what it did while you were away
+summary: >
+  A receipts feed and usage view: every tool call, every background run, how
+  long each took, and which model did it.
+detail: >
+  The Activity page is the audit trail. It shows what ran, when, on which
+  model, and how many tokens it cost, with per-turn timelines. It exists so
+  you never have to wonder what an assistant with access to your mail was
+  doing.
+screenshot: activity.png
+requires: []

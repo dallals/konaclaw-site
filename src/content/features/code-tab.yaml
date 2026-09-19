@@ -1,0 +1,15 @@
+id: code-tab
+name: Code
+outcome: automation
+status: shipped
+headline: A coding helper for your own projects
+summary: >
+  Point it at a folder and it can read, edit, run, and diff code, with every
+  change reviewable and revertible.
+detail: >
+  The Code tab is for people who keep projects on their Mac. Pick a folder,
+  ask for a change, and review a per-file diff before keeping it. Commands
+  run in managed processes you can stop. It is a power feature and lives
+  here rather than on the home page.
+screenshot: activity.png
+requires: []

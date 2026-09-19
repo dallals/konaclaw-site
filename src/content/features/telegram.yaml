@@ -1,0 +1,13 @@
+id: telegram
+name: Telegram
+outcome: your-mac
+status: v1_1
+headline: Text Kona from your phone
+summary: >
+  Connect a Telegram bot and every capability is a message away, with
+  approvals you can tap.
+detail: >
+  Your Mac stays the brain; Telegram is a remote. Ask for the brief, attach a
+  notebook, approve an action with a button. Arrives in version 1.1.
+screenshot: chat-week.png
+requires: [telegram-bot-token]

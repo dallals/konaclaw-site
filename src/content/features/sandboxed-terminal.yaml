@@ -1,0 +1,13 @@
+id: sandboxed-terminal
+name: Sandboxed terminal
+outcome: automation
+status: v1_1
+headline: Runs commands in a sealed box
+summary: >
+  Shell commands execute inside a small Linux virtual machine, not on your
+  Mac directly.
+detail: >
+  When Kona needs to run a command, it does so in a disposable microVM with
+  only the folders you share. Arrives in version 1.1.
+screenshot: activity.png
+requires: []

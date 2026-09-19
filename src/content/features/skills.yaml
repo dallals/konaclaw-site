@@ -1,0 +1,15 @@
+id: skills
+name: Skills
+outcome: automation
+status: shipped
+headline: Teach it a routine once
+summary: >
+  A skill is a folder describing a job. Trigger it with a slash command, and
+  Kona can even draft skills from things you do repeatedly.
+detail: >
+  Skills bundle instructions and scripts for a repeatable job, from building
+  a weekly report to formatting a document. Type a slash and pick one. Kona
+  watches for routines you repeat and offers to save them as a skill, ready
+  for review before it ever runs.
+screenshot: chat-skill.png
+requires: []

@@ -1,0 +1,14 @@
+id: voice
+name: Voice
+outcome: your-mac
+status: shipped
+headline: Talk to it, and it can talk back
+summary: >
+  Dictate with a local speech model and have replies read aloud by a local
+  voice. No audio leaves the Mac.
+detail: >
+  Press the microphone to dictate; transcription runs on-device. Turn on
+  read-aloud and replies are spoken by a neural voice that also runs
+  locally. Both are optional and off by default.
+screenshot: chat-week.png
+requires: []

@@ -1,0 +1,15 @@
+id: local-engine
+name: Local engine
+outcome: private
+status: shipped
+headline: Its own inference engine, on your Mac
+summary: >
+  KonaClaw ships with an embedded engine built on Apple's MLX. Models run on
+  your Apple-silicon GPU. There is no account, no server, no usage cap.
+detail: >
+  The engine is supervised by the app: it starts when KonaClaw starts, warms
+  the model you picked, and restarts itself if it ever falls over. Chat,
+  vision, and the embeddings behind memory and notebooks all run through it.
+  You choose the model from a catalog sized to your Mac's memory.
+screenshot: models.png
+requires: []

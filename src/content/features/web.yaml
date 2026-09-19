@@ -1,0 +1,15 @@
+id: web
+name: Web search and reading
+outcome: your-mac
+status: shipped
+headline: Reads the web for you, locally
+summary: >
+  Kona searches, opens pages in a headless local browser, and cites what it
+  found. Image search and page images included.
+detail: >
+  Pages are fetched by a WebKit engine on your Mac, the same one Safari uses,
+  so sites that need JavaScript still work and nothing is proxied through a
+  third party. Answers link to their sources. A per-turn source cap keeps a
+  runaway research question from reading the whole internet.
+screenshot: chat-web.png
+requires: []

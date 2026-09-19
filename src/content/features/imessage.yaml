@@ -1,0 +1,12 @@
+id: imessage
+name: iMessage
+outcome: your-mac
+status: v1_1
+headline: Kona in Messages
+summary: >
+  Message Kona from the Messages app on any of your devices.
+detail: >
+  Uses the Messages app on your Mac as the channel, so the conversation
+  shows up on your iPhone and watch too. Arrives in version 1.1.
+screenshot: chat-week.png
+requires: []

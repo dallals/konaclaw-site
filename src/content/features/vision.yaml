@@ -1,0 +1,14 @@
+id: vision
+name: Vision
+outcome: your-mac
+status: shipped
+headline: Understands images
+summary: >
+  Show Kona a screenshot, a photo of a receipt, or a whiteboard, and ask.
+detail: >
+  A local vision model describes images and reads the text in them. Even
+  when the chat model itself is text-only, it can ask the vision model what
+  an image shows and carry on. Useful for receipts, error dialogs, and
+  handwritten notes.
+screenshot: chat-web.png
+requires: []

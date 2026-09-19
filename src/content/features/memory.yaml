@@ -1,0 +1,15 @@
+id: memory
+name: Memory
+outcome: memory
+status: shipped
+headline: Tell it once
+summary: >
+  Facts you share are kept and recalled when relevant. You can see, edit,
+  and delete every one of them.
+detail: >
+  Kona extracts durable facts from what you tell it, in the background, on
+  the machine. Later conversations recall the relevant ones. A newer fact
+  supersedes an older one instead of piling up. The whole store is a list you
+  can read and prune.
+screenshot: chat-memory.png
+requires: []

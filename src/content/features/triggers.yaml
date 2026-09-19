@@ -1,0 +1,15 @@
+id: triggers
+name: Triggers
+outcome: automation
+status: shipped
+headline: Tell me when this changes
+summary: >
+  Watch a feed, a web page, a price, your calendar, or your inbox, and have
+  Kona judge whether it is worth interrupting you.
+detail: >
+  Eight sources: time, price, calendar, email, RSS, a web page, a script you
+  allow, and your portfolio. Kona reads each event and decides whether to
+  speak, so a noisy feed does not become a noisy assistant. Every fire is
+  logged, and rules can opt out of low-power pauses.
+screenshot: automations.png
+requires: []

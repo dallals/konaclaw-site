@@ -1,0 +1,15 @@
+id: notebooks-notes
+name: Notes and study guides
+outcome: notebooks
+status: shipped
+headline: Save what you learn
+summary: >
+  Save any answer as a note, write your own, and generate a study guide,
+  briefing, FAQ, or timeline from the whole notebook.
+detail: >
+  Notes live beside the sources and can be promoted into sources themselves.
+  One click produces a study guide, briefing document, FAQ, or timeline
+  built from everything in the notebook, generated in the background on the
+  machine.
+screenshot: notebooks.png
+requires: []

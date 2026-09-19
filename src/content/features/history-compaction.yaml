@@ -1,0 +1,14 @@
+id: history-compaction
+name: Long conversations
+outcome: memory
+status: shipped
+headline: Keeps the gist of a long thread
+summary: >
+  Old turns are summarized rather than dropped, so a conversation that has
+  gone on for weeks still knows how it started.
+detail: >
+  As a chat grows, a rolling summary stands in for the oldest turns. The
+  effect is a conversation that stays fast and still remembers the decision
+  you made on day one. Summaries are written by a small local model.
+screenshot: chat-memory.png
+requires: []

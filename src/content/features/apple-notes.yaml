@@ -1,0 +1,14 @@
+id: apple-notes
+name: Notes
+outcome: your-mac
+status: shipped
+headline: Finds the note you half remember
+summary: >
+  Search and read your Apple Notes by asking. Kona quotes the note, not a
+  guess about it.
+detail: >
+  Ask for the note with the paint colors or the packing list from last
+  summer. Kona searches Notes folders through macOS, read-only, and brings
+  the text into the conversation with the note's title.
+screenshot: chat-week.png
+requires: []

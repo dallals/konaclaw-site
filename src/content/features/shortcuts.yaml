@@ -1,0 +1,14 @@
+id: shortcuts
+name: Shortcuts
+outcome: your-mac
+status: shipped
+headline: Runs your Shortcuts
+summary: >
+  Any Shortcut you put in a Kona folder becomes something you can ask for,
+  including home scenes.
+detail: >
+  Put the Shortcuts you want Kona to run into a folder named Kona. Kona lists
+  and runs only those, so it can turn on the lights or start your focus
+  routine without ever touching Shortcuts you did not hand it.
+screenshot: chat-week.png
+requires: []

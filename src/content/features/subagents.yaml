@@ -1,0 +1,15 @@
+id: subagents
+name: Subagents
+outcome: automation
+status: shipped
+headline: Hands long jobs to a helper
+summary: >
+  Mention a specialist by name and it works in the background while you keep
+  chatting. The report arrives when it is done.
+detail: >
+  Subagents are named specialists with their own instructions and tools: a
+  researcher, a summarizer, a fact-checker. Long jobs run detached, you keep
+  the chat, and results come back as their own message, with a Stop button
+  if you change your mind.
+screenshot: activity.png
+requires: []

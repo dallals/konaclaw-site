@@ -1,0 +1,14 @@
+id: rich-graphics
+name: Charts and diagrams
+outcome: your-mac
+status: shipped
+headline: Ask for a chart, get a chart
+summary: >
+  Charts, diagrams, and one-page posters rendered locally and dropped into
+  the conversation as images.
+detail: >
+  Say "chart this" or use the chart, diagram, and poster commands. Kona
+  renders the result with a local WebKit engine and attaches the image to
+  its reply. Comparisons and reports can include them automatically.
+screenshot: chat-chart.png
+requires: []

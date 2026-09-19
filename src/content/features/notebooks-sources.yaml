@@ -1,0 +1,15 @@
+id: notebooks-sources
+name: Notebook sources
+outcome: notebooks
+status: shipped
+headline: Ask your documents
+summary: >
+  Group files, web pages, and video transcripts into a notebook, then ask
+  questions answered only from those sources.
+detail: >
+  A notebook is a bounded set of sources: PDFs, Office documents, web URLs,
+  YouTube transcripts. Attach one to a chat and answers are drawn only from
+  it, with citations that open the exact passage. While a notebook is
+  attached, web search is switched off so grounded means grounded.
+screenshot: notebooks.png
+requires: []

@@ -1,0 +1,15 @@
+id: model-picker
+name: Model picker
+outcome: private
+status: shipped
+headline: Switch models per chat
+summary: >
+  Pick a model for a single conversation from the header, or let KonaClaw
+  choose a fast or deep model by how hard the question looks.
+detail: >
+  A chat can pin its own model; otherwise the app can pick between a fast
+  tier and a deep tier by task complexity, and it never silently downgrades
+  mid-conversation. A thinking-level control lets you trade speed for
+  thoroughness on models that support it.
+screenshot: models.png
+requires: []

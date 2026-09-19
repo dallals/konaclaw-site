@@ -1,0 +1,14 @@
+id: apple-contacts
+name: Contacts
+outcome: your-mac
+status: shipped
+headline: Knows who people are
+summary: >
+  Names in your requests resolve against your real address book, so "email
+  Priya" goes to the right Priya.
+detail: >
+  Kona reads Contacts through macOS, read-only. It uses them to resolve
+  people you mention, fill in addresses, and answer questions like "what's
+  the dentist's number." It never edits or exports your contacts.
+screenshot: chat-mail.png
+requires: []

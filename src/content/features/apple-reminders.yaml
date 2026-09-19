@@ -1,0 +1,14 @@
+id: apple-reminders
+name: Reminders
+outcome: your-mac
+status: shipped
+headline: Reminders that land in Reminders
+summary: >
+  Ask Kona to remind you and it appears in Apple Reminders too, so it is on
+  your phone and your watch.
+detail: >
+  Set one-off or repeating reminders in plain language. Kona keeps its own
+  schedule and mirrors each reminder into Apple Reminders, so a Mac that is
+  asleep is not a reminder that is missed. Edit, snooze, or cancel by asking.
+screenshot: automations.png
+requires: []

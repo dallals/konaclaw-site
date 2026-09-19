@@ -1,0 +1,15 @@
+id: no-telemetry
+name: No telemetry
+outcome: private
+status: shipped
+headline: Nothing phones home
+summary: >
+  KonaClaw sends no analytics, no crash reports, and no usage data. The only
+  network traffic is what you ask for.
+detail: >
+  When Kona searches the web, it fetches pages for you the way a browser
+  would. When you attach a cloud model on purpose, that model sees the turn.
+  Everything else stays on the machine. There is no account to create and
+  nothing to opt out of.
+screenshot: chat-week.png
+requires: []

@@ -1,0 +1,15 @@
+id: reminders-scheduling
+name: Scheduling
+outcome: automation
+status: shipped
+headline: Later, tomorrow, every Monday
+summary: >
+  One-off and recurring jobs in plain language, with delivery where you
+  actually are.
+detail: >
+  "Remind me Friday at four" and "every weekday at eight" both just work.
+  Jobs survive restarts and failures, retry sensibly, and deliver to the
+  dashboard, with the option to mirror to Apple Reminders so they reach your
+  phone.
+screenshot: automations.png
+requires: []

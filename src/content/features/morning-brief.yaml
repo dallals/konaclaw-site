@@ -1,0 +1,15 @@
+id: morning-brief
+name: Morning brief
+outcome: automation
+status: shipped
+headline: Your day, before you ask
+summary: >
+  Calendar, inbox, weather, portfolio, and curated news in one message, every
+  morning, without a model round-trip for the parts that do not need one.
+detail: >
+  The brief runs on a schedule and is built deterministically where it can
+  be, so it is fast and the same every day. If your Mac was asleep, it
+  catches up when it wakes. Ask for it any time with a phrase like "morning
+  brief".
+screenshot: chat-brief.png
+requires: []
