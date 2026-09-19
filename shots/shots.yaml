@@ -1,0 +1,36 @@
+# id → route on the dashboard dev server, and a selector that must be visible before capture.
+# Conversation routes are filled in by capture.ts from ~/KonaClawDemo/data/conv_<key>.id.
+- id: chat-week
+  conv: week
+  ready: 'text=Tuesday is the tight one'
+- id: chat-mail
+  conv: mail
+  ready: 'text=Dana Whitfield'
+- id: chat-memory
+  conv: memory
+  ready: 'text=aisle 14C'
+- id: chat-brief
+  conv: brief
+  ready: 'text=Good morning'
+- id: chat-skill
+  conv: skill
+  ready: 'text=weekly-report'
+- id: chat-web
+  conv: web
+  ready: 'text=Model A'
+- id: chat-chart
+  conv: chart
+  ready: 'text=grocery spending'
+- id: models
+  route: /models
+  ready: 'role=heading'
+- id: automations
+  route: /automations
+  ready: 'text=Bike-lane news'
+- id: activity
+  route: /activity
+  ready: 'role=heading'
+- id: notebooks
+  route: /notebooks
+  click: 'text=Field Guide to Local Birds'
+  ready: 'text=● ready'
