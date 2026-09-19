@@ -1,6 +1,39 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import IdeaSection from "../components/IdeaSection.astro";
+import WaitlistForm from "../components/WaitlistForm.astro";
 ---
-<Base title="KonaClaw" description="A personal AI assistant that runs entirely on your Mac.">
-  <h1 class="mt-16 text-4xl font-semibold text-text-strong">KonaClaw</h1>
+<Base title="KonaClaw" description="A personal AI assistant that runs entirely on your Mac. Reads your calendar, mail and notes, remembers you, and does things while you are away. Nothing leaves the machine.">
+  <Hero />
+
+  <IdeaSection outcome="private" shot="models.png" alt="The Models tab showing locally installed models and the embedded engine">
+    The model runs on your own Mac's GPU. Your conversations, your calendar, your mail
+    and your notes stay on the disk they are already on. There is no account, no
+    telemetry, and no usage cap, because there is no server.
+  </IdeaSection>
+
+  <IdeaSection outcome="your-mac" shot="chat-mail.png" alt="Kona summarizing a mail thread and drafting a reply" flip>
+    Ask what came in from your accountant, move Thursday's dentist to next week, or find
+    the note with the paint colors. Kona works through Calendar, Mail, Contacts, Notes and
+    Reminders directly, so the answer comes from your real data, not a copy of it.
+  </IdeaSection>
+
+  <IdeaSection outcome="memory" shot="chat-memory.png" alt="Kona recalling a fact the user mentioned in an earlier conversation">
+    Tell it your kids' school, your preferred airline, the name of your building manager.
+    It remembers, across every conversation, and you can read and delete every fact it
+    keeps.
+  </IdeaSection>
+
+  <IdeaSection outcome="automation" shot="chat-brief.png" alt="A morning brief message with calendar, inbox, weather and news sections" flip>
+    A brief every morning. A watch on the page you keep refreshing. A reminder that
+    reaches your phone. Skills for the jobs you repeat. All of it runs on a schedule and
+    reports back when it is done.
+  </IdeaSection>
+
+  <section class="mt-8 rounded-2xl border border-line bg-panel px-6 py-12 text-center md:px-16">
+    <h2 class="text-3xl font-semibold tracking-tight text-text-strong">Be first to know when it ships</h2>
+    <p class="mx-auto mt-3 max-w-prose text-text">Free trial at launch, then a paid license. Pricing is announced at launch. Leave an email and you will hear the day the download is live.</p>
+    <div class="mx-auto mt-6 flex justify-center"><WaitlistForm /></div>
+  </section>
 </Base>
