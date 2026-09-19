@@ -1,0 +1,20 @@
+---
+import Mark from "./Mark.astro";
+const items = [
+  { href: "/capabilities", label: "Capabilities" },
+  { href: "/private", label: "Privacy" },
+  { href: "/download", label: "Download" },
+];
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+<header class="border-b border-line">
+  <nav aria-label="Primary" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <a href="/" aria-label="KonaClaw home"><Mark /></a>
+    <ul class="flex items-center gap-6 text-sm">
+      {items.map((i) => (
+        <li><a href={i.href} aria-current={path === i.href ? "page" : undefined}
+               class="text-text no-underline hover:text-accent-deep aria-[current=page]:text-accent-deep aria-[current=page]:font-medium">{i.label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</header>

@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "./tokens.css";
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --color-bg: rgb(var(--bg));
+  --color-bg-deep: rgb(var(--bg-deep));
+  --color-panel: rgb(var(--panel));
+  --color-panel-2: rgb(var(--panel-2));
+  --color-panel-3: rgb(var(--panel-3));
+  --color-line: rgb(var(--line));
+  --color-line-bright: rgb(var(--line-bright));
+  --color-text: rgb(var(--text));
+  --color-text-strong: rgb(var(--text-strong));
+  --color-muted: rgb(var(--muted));
+  --color-muted-2: rgb(var(--muted-2));
+  --color-accent: rgb(var(--accent));
+  --color-accent-bright: rgb(var(--accent-bright));
+  --color-accent-deep: rgb(var(--accent-deep));
+  --color-ok: rgb(var(--ok));
+  --color-warn: rgb(var(--warn));
+  --color-bad: rgb(var(--bad));
+  --color-on-accent: rgb(var(--on-accent));
+}
+
+html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+a { color: var(--color-accent-deep); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
+.prose-kc p  { max-width: 65ch; line-height: 1.65; margin: 0.75rem 0; }

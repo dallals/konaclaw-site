@@ -1,0 +1,46 @@
+/* Cinnamon palette — copied from kc-dashboard/src/index.css so site and
+   screenshots read as one system. Values are RGB triplets for rgb(var()). */
+:root {
+  --bg:           253 250 245;
+  --bg-deep:      247 241 231;
+  --panel:        244 237 226;
+  --panel-2:      236 226 212;
+  --panel-3:      227 214 196;
+  --line:         232 222 206;
+  --line-bright:  219 203 180;
+  --text:          44  37  33;
+  --text-strong:   26  21  18;
+  --muted:        138 122 107;
+  --muted-2:      180 164 148;
+  --accent:       169 102  63;
+  --accent-bright:192 122  80;
+  --accent-deep:  142  82  48;
+  --ok:            63 138  79;
+  --warn:         193 133  42;
+  --bad:          192  57  43;
+  --on-accent:    255 250 244;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:            22  17  14;
+    --bg-deep:       16  12  10;
+    --panel:         32  26  21;
+    --panel-2:       43  34  25;
+    --panel-3:       58  46  35;
+    --line:          51  41  32;
+    --line-bright:   84  67  52;
+    --text:         242 233 224;
+    --text-strong:  255 250 244;
+    --muted:        178 156 138;
+    --muted-2:      139 119 103;
+    --accent:       208 138  94;
+    --accent-bright:224 163 123;
+    --accent-deep:  168 104  66;
+    --ok:            78 168  92;
+    --warn:         224 160  60;
+    --bad:          224  92  78;
+    --on-accent:     26  21  18;
+    color-scheme: dark;
+  }
+}
