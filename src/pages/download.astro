@@ -1,0 +1,27 @@
+---
+import Base from "../layouts/Base.astro";
+import WaitlistForm from "../components/WaitlistForm.astro";
+---
+<Base title="Download" description="KonaClaw for macOS on Apple silicon. Free trial at launch, then a paid license. Leave an email to be told when it ships.">
+  <section class="pt-16">
+    <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Get KonaClaw</h1>
+    <p class="mt-4 max-w-prose text-lg text-text">The first release is being signed and notarized now. Leave an email and you will get exactly one message the day it is live.</p>
+    <div class="mt-8"><WaitlistForm /></div>
+  </section>
+  <section class="prose-kc mt-16 grid gap-10 md:grid-cols-2">
+    <div>
+      <h2>How it will work</h2>
+      <p>Download a disk image, drag KonaClaw to Applications, open it. A short setup asks for the permissions you want to grant and downloads a model sized to your Mac. First chat in a few minutes.</p>
+      <p><strong>Free trial, then a paid license.</strong> Try everything first. Pricing is announced at launch.</p>
+    </div>
+    <div>
+      <h2>Requirements</h2>
+      <ul>
+        <li>A Mac with Apple silicon (M1 or later).</li>
+        <li>macOS 15 or later.</li>
+        <li>16 GB of memory or more. Larger models want 32 GB or more.</li>
+        <li>About 10 GB of disk for the app and a first model.</li>
+      </ul>
+    </div>
+  </section>
+</Base>

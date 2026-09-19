@@ -6,6 +6,8 @@ dev:               ; $(NPM) run dev
 build:             ; $(NPM) run build
 check:             ; $(NPX) astro check
 test:              ; $(NPX) vitest run
-e2e:               ; $(NPX) playwright test
+e2e:
+	$(NPX) astro preview --host 127.0.0.1 --port 4321
+	$(NPX) playwright test; rc=$$?; $(NPX) astro preview stop; exit $$rc
 shots:             ; $(NPX) tsx shots/capture.ts
 shots-placeholder: ; $(NPX) tsx shots/placeholder.ts
