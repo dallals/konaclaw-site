@@ -1,4 +1,5 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -13,9 +14,9 @@ export const featureSchema = z.object({
   headline: z.string().min(1).max(80),
   summary: z.string().min(1).max(300),
   detail: z.string().min(1).max(900),
-  screenshot: z.string().regex(/^[a-z0-9-]+\.png$/).refine(shotExists, (v) => ({
-    message: `screenshot "${v}" not found under public/shots/ — run \`make shots\` or \`make shots-placeholder\``,
-  })),
+  screenshot: z.string().regex(/^[a-z0-9-]+\.png$/).refine(shotExists, {
+    error: (iss) => `screenshot "${iss.input}" not found under public/shots/ — run \`make shots\` or \`make shots-placeholder\``,
+  }),
   requires: z.array(z.string()).default([]),
 });
 
