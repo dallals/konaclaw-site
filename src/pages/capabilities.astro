@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import CapabilityFilter from "../components/CapabilityFilter";
+import { groupByOutcome, comingSoon, visible, type Feature } from "../lib/features";
+
+const all = (await getCollection("features")).map((e) => e.data as Feature);
+const groups = groupByOutcome(visible(all));
+const soon = comingSoon(all);
+---
+<Base title="Capabilities" description="Everything KonaClaw does, organized by what you want done. Every item runs on your Mac.">
+  <div class="flex flex-wrap items-end justify-between gap-4 pt-16">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Everything it does</h1>
+      <p class="mt-3 max-w-prose text-lg text-text">Organized by what you want done. Every item below runs on your Mac unless you deliberately attach a cloud model.</p>
+    </div>
+    <CapabilityFilter client:idle />
+  </div>
+
+  {groups.map((g) => (
+    <section id={g.outcome} class="scroll-mt-24 pt-14">
+      <h2 class="text-2xl font-semibold text-text-strong">{g.title}</h2>
+      <div class="mt-5 grid gap-4 md:grid-cols-2">{g.features.map((f) => <FeatureCard feature={f} />)}</div>
+    </section>
+  ))}
+
+  {soon.length > 0 && (
+    <section id="coming-in-1-1" class="scroll-mt-24 pt-14" data-coming-soon>
+      <h2 class="text-2xl font-semibold text-text-strong">Coming in 1.1</h2>
+      <p class="mt-2 max-w-prose text-muted">Built and working, held back from the first release while their setup is made painless.</p>
+      <div class="mt-5 grid gap-4 md:grid-cols-2">{soon.map((f) => <FeatureCard feature={f} />)}</div>
+    </section>
+  )}
+</Base>
+
+<style is:global>
+  html[data-cap-filter="shipped"] [data-coming-soon] { display: none; }
+</style>
