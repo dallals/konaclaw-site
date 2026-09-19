@@ -1,0 +1,15 @@
+id: apple-calendar
+name: Calendar
+outcome: your-mac
+status: shipped
+headline: Reads and edits your real calendar
+summary: >
+  Kona sees every calendar you do, creates and moves events, and answers
+  "what's my week look like" from the same data Calendar shows.
+detail: >
+  Ask what is on Thursday, move the dentist to next week, or block two hours
+  for deep work. Kona uses macOS EventKit, so it edits the same calendars
+  your Calendar app shows, across every account you have signed in. Nothing
+  is copied anywhere.
+screenshot: chat-week.png
+requires: []
