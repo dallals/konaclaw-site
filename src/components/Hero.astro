@@ -1,0 +1,21 @@
+---
+import Shot from "./Shot.astro";
+---
+<section class="grid items-center gap-10 pt-16 md:grid-cols-2 md:pt-24">
+  <div>
+    <h1 class="text-4xl font-semibold leading-tight tracking-tight text-text-strong md:text-5xl">
+      A personal assistant that lives on your Mac. Only your Mac.
+    </h1>
+    <p class="mt-5 max-w-prose text-lg leading-relaxed text-text">
+      KonaClaw reads your calendar, your mail, and your notes, remembers what you tell it,
+      and does the boring parts of your day. It runs on your own Apple-silicon Mac, so none
+      of that ever leaves the room.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/download" class="rounded-lg bg-accent px-5 py-3 font-medium text-on-accent no-underline hover:bg-accent-deep">Get notified at launch</a>
+      <a href="/capabilities" class="rounded-lg border border-line-bright px-5 py-3 font-medium text-text no-underline hover:bg-panel">See everything it does</a>
+    </div>
+    <p class="mt-4 text-sm text-muted">Free trial at launch, then a paid license. macOS on Apple silicon.</p>
+  </div>
+  <Shot src="chat-week.png" alt="KonaClaw answering a question about the week ahead from the user's own calendar" priority />
+</section>

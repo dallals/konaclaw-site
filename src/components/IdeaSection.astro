@@ -1,0 +1,15 @@
+---
+import Shot from "./Shot.astro";
+import { OUTCOMES, type Outcome } from "../lib/features";
+interface Props { outcome: Outcome; shot: string; alt: string; flip?: boolean }
+const { outcome, shot, alt, flip = false } = Astro.props;
+const o = OUTCOMES.find((x) => x.id === outcome)!;
+---
+<section class="grid items-center gap-10 py-16 md:grid-cols-2">
+  <div class:list={[flip && "md:order-2"]}>
+    <h2 class="text-3xl font-semibold tracking-tight text-text-strong">{o.title}</h2>
+    <p class="mt-4 max-w-prose text-lg leading-relaxed text-text"><slot /></p>
+    <a href={o.href} class="mt-5 inline-block font-medium">Learn more →</a>
+  </div>
+  <div class:list={[flip && "md:order-1"]}><Shot src={shot} alt={alt} /></div>
+</section>

@@ -1,0 +1,14 @@
+---
+import type { Feature } from "../lib/features";
+import StatusBadge from "./StatusBadge.astro";
+interface Props { feature: Feature }
+const { feature: f } = Astro.props;
+---
+<article id={f.id} class="scroll-mt-24 rounded-lg border border-line bg-panel p-5" data-status={f.status}>
+  <div class="mb-1 flex items-center justify-between gap-3">
+    <h3 class="text-base font-semibold text-text-strong">{f.name}</h3>
+    {f.status !== "planned" && <StatusBadge status={f.status} />}
+  </div>
+  <p class="text-sm font-medium text-text">{f.headline}</p>
+  <p class="mt-2 text-sm leading-relaxed text-muted">{f.detail}</p>
+</article>

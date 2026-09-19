@@ -1,0 +1,7 @@
+---
+interface Props { status: "shipped" | "v1_1" }
+const { status } = Astro.props;
+const label = status === "shipped" ? "Available" : "Coming in 1.1";
+---
+<span class:list={["rounded-full px-2 py-0.5 text-xs font-medium",
+  status === "shipped" ? "bg-ok/15 text-ok" : "bg-warn/15 text-warn"]}>{label}</span>

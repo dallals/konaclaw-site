@@ -1,0 +1,14 @@
+---
+const user = import.meta.env.PUBLIC_BUTTONDOWN_USERNAME as string | undefined;
+if (!user) throw new Error("PUBLIC_BUTTONDOWN_USERNAME is not set; the waitlist form cannot be built.");
+const action = `https://buttondown.com/api/emails/embed-subscribe/${user}`;
+---
+<form action={action} method="post" class="flex max-w-md flex-col gap-3 sm:flex-row" data-testid="waitlist">
+  <label for="email" class="sr-only">Email address</label>
+  <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"
+         class="flex-1 rounded-lg border border-line-bright bg-bg px-4 py-3 text-text placeholder:text-muted-2" />
+  <input type="hidden" name="embed" value="1" />
+  <input type="hidden" name="tag" value="waitlist" />
+  <button type="submit" class="rounded-lg bg-accent px-5 py-3 font-medium text-on-accent hover:bg-accent-deep">Notify me</button>
+</form>
+<p class="mt-3 text-sm text-muted">One email when the download is live. Unsubscribe with one click. See the <a href="/legal/privacy">privacy policy</a>.</p>
