@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Shot from "../components/Shot.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import { visible, type Feature } from "../lib/features";
+const outcome = "notebooks";
+const features = visible((await getCollection("features")).map((e) => e.data as Feature)).filter((f) => f.outcome === outcome);
+---
+<Base title="Notebooks" description="Put the documents that matter into a notebook and ask questions of them.">
+  <section class="grid items-center gap-10 pt-16 md:grid-cols-2">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Grounded in your own sources.</h1>
+      <div class="prose-kc mt-4"><p>Put the documents that matter into a notebook and ask questions of them. Answers come only from those sources and cite the exact passage.</p></div>
+    </div>
+    <Shot src="notebooks.png" alt="A notebook with several sources and a cited answer" priority />
+  </section>
+  <div class="prose-kc">
+    <h2>Sources.</h2>
+    <p>PDFs, Word, Excel and PowerPoint files, web pages, and YouTube transcripts. Each is copied into the notebook, split by heading, and indexed on your Mac.</p>
+    <h2>Grounded means grounded.</h2>
+    <p>While a notebook is attached to a chat, web search is switched off. The answer cannot quietly reach for the internet to fill a gap. If the sources do not say, Kona says so.</p>
+    <h2>Notes and study material.</h2>
+    <p>Save any answer as a note, write your own, and promote a note into a source. One click produces a study guide, briefing document, FAQ, or timeline from the whole notebook, generated in the background.</p>
+  </div>
+  <section class="pt-14">
+    <h2 class="text-2xl font-semibold text-text-strong">What this covers</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-2">{features.map((f) => <FeatureCard feature={f} />)}</div>
+  </section>
+  <p class="mt-10"><a href="/capabilities">See everything KonaClaw does →</a></p>
+</Base>

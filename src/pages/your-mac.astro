@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Shot from "../components/Shot.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import { visible, type Feature } from "../lib/features";
+const outcome = "your-mac";
+const features = visible((await getCollection("features")).map((e) => e.data as Feature)).filter((f) => f.outcome === outcome);
+---
+<Base title="Your Mac" description="Most assistants know about your life only if you paste it in.">
+  <section class="grid items-center gap-10 pt-16 md:grid-cols-2">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Works inside your real apps.</h1>
+      <div class="prose-kc mt-4"><p>Most assistants know about your life only if you paste it in. KonaClaw is on the Mac where your life already is, so it can just look.</p></div>
+    </div>
+    <Shot src="chat-mail.png" alt="Kona summarizing a mail thread and offering to draft a reply" priority />
+  </section>
+  <div class="prose-kc">
+    <h2>Calendar and Reminders.</h2>
+    <p>Ask what is on Thursday, move the dentist to next week, block two hours for deep work. Reminders you set with Kona also land in Apple Reminders, so they reach your phone and your watch.</p>
+    <h2>Mail.</h2>
+    <p>Search across accounts, get a thread summarized, have a reply drafted in your voice, and send it from your own address. Works with Apple Mail or Gmail.</p>
+    <h2>Contacts and Notes.</h2>
+    <p>People you mention resolve against your real address book. The note with the paint colors is findable by asking. Both are read-only: Kona never edits your contacts or your notes.</p>
+    <h2>Files, images, and the web.</h2>
+    <p>Drop a PDF, spreadsheet, or photo into the chat and ask. Pages from the web are fetched by a WebKit engine on your Mac and cited. Charts and diagrams are rendered locally and attached to the reply.</p>
+    <h2>Your Shortcuts.</h2>
+    <p>Put the Shortcuts you want Kona to run in a folder named Kona. It can run those, and only those.</p>
+  </div>
+  <section class="pt-14">
+    <h2 class="text-2xl font-semibold text-text-strong">What this covers</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-2">{features.map((f) => <FeatureCard feature={f} />)}</div>
+  </section>
+  <p class="mt-10"><a href="/capabilities">See everything KonaClaw does →</a></p>
+</Base>

@@ -1,0 +1,33 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Shot from "../components/Shot.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import { visible, type Feature } from "../lib/features";
+const outcome = "private";
+const features = visible((await getCollection("features")).map((e) => e.data as Feature)).filter((f) => f.outcome === outcome);
+---
+<Base title="Privacy" description="KonaClaw is a program on your computer, not a service you log into.">
+  <section class="grid items-center gap-10 pt-16 md:grid-cols-2">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Runs entirely on your Mac.</h1>
+      <div class="prose-kc mt-4"><p>KonaClaw is a program on your computer, not a service you log into. The model that reads your mail runs on your GPU. The memory of what you told it is a file on your disk. When you quit the app, everything stops.</p></div>
+    </div>
+    <Shot src="models.png" alt="The Models tab listing locally installed models" priority />
+  </section>
+  <div class="prose-kc">
+    <h2>What leaves the machine.</h2>
+    <p>Nothing, by default. When you ask Kona to search the web, it fetches pages the way Safari would, from your address. When you attach a cloud model on purpose, that conversation goes to that provider and the model in use is shown on every message. There is no analytics, no crash reporting, and no account.</p>
+    <h2>What it can see, and how you control it.</h2>
+    <p>macOS asks you before KonaClaw can read Calendar, Contacts, Reminders, or automate Mail. You can revoke any of those in System Settings at any time and the matching capability simply switches off. Actions that change things, like sending a message or creating an event, are confirmed before they run.</p>
+    <h2>Your memory is yours.</h2>
+    <p>Facts Kona keeps about you are a list you can open, edit, and delete. Nothing is inferred and hidden. If you delete a fact it is gone, not soft-deleted somewhere.</p>
+    <h2>The engine.</h2>
+    <p>The embedded engine is built on Apple's MLX framework and is supervised by the app: started with it, restarted if it fails, stopped when you quit. You choose the model from a catalog sized to your Mac's memory, and you can switch any time.</p>
+  </div>
+  <section class="pt-14">
+    <h2 class="text-2xl font-semibold text-text-strong">What this covers</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-2">{features.map((f) => <FeatureCard feature={f} />)}</div>
+  </section>
+  <p class="mt-10"><a href="/capabilities">See everything KonaClaw does →</a></p>
+</Base>

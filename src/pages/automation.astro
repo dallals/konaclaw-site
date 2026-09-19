@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Shot from "../components/Shot.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import { visible, type Feature } from "../lib/features";
+const outcome = "automation";
+const features = visible((await getCollection("features")).map((e) => e.data as Feature)).filter((f) => f.outcome === outcome);
+---
+<Base title="Automation" description="The useful assistant is the one working when you are not looking.">
+  <section class="grid items-center gap-10 pt-16 md:grid-cols-2">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Does things while you are away.</h1>
+      <div class="prose-kc mt-4"><p>The useful assistant is the one working when you are not looking. KonaClaw runs briefs, watches, and routines on their own and tells you only when there is something to say.</p></div>
+    </div>
+    <Shot src="automations.png" alt="The Automations tab listing scheduled briefs, triggers and reminders" priority />
+  </section>
+  <div class="prose-kc">
+    <h2>The morning brief.</h2>
+    <p>Calendar, inbox, weather, portfolio, and curated news in one message every morning. Built without a model round-trip where it does not need one, so it is fast and the same every day.</p>
+    <h2>Triggers.</h2>
+    <p>Watch an RSS feed, a web page, a price, your calendar, or your inbox. Kona reads each event and decides whether it is worth interrupting you, so a noisy feed does not make a noisy assistant.</p>
+    <h2>Skills.</h2>
+    <p>A skill is a folder describing a job you repeat. Run one with a slash command. Kona notices routines you repeat and offers to save them as skills for your review.</p>
+    <h2>Helpers and workflows.</h2>
+    <p>Mention a specialist by name and it works in the background while you keep chatting. Chain several into a workflow you can schedule and watch run step by step.</p>
+    <h2>Receipts.</h2>
+    <p>The Activity page lists everything that ran, when, on which model, and how long it took. An assistant with access to your mail should never leave you wondering what it did.</p>
+  </div>
+  <section class="pt-14">
+    <h2 class="text-2xl font-semibold text-text-strong">What this covers</h2>
+    <div class="mt-5 grid gap-4 md:grid-cols-2">{features.map((f) => <FeatureCard feature={f} />)}</div>
+  </section>
+  <p class="mt-10"><a href="/capabilities">See everything KonaClaw does →</a></p>
+</Base>
