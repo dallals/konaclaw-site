@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Build ~/KonaClawDemo: a minimal agent file and a conversations DB with
-invented transcripts. Idempotent: wipes and recreates the demo dir.
+invented transcripts. Idempotent: resets the agent file and transcripts only;
+never touches notebooks/ or anything else under the demo tree.
 Schema for the two tables is copied from kc-supervisor storage.py so the
 supervisor's own init() (CREATE TABLE IF NOT EXISTS) adds the rest."""
-import json, shutil, sqlite3, time
+import json, sqlite3, time
 from pathlib import Path
 
 HOME = Path.home() / "KonaClawDemo"
@@ -68,11 +69,14 @@ TRANSCRIPTS = {
 }
 
 def main():
-    if HOME.exists(): shutil.rmtree(HOME)
-    (HOME / "agents").mkdir(parents=True); (HOME / "data").mkdir()
+    # Never delete the demo tree: the demo notebook is created by hand once and
+    # must survive every reseed. Reset only the agent file and the transcripts.
+    (HOME / "agents").mkdir(parents=True, exist_ok=True); (HOME / "data").mkdir(exist_ok=True)
     (HOME / "agents" / f"{AGENT}.yaml").write_text(
         f"name: {AGENT}\nmodel: demo/no-live-turns\nsystem_prompt: |\n  You are Kona, a personal assistant. (Demo profile; no live turns are run.)\n")
     con = sqlite3.connect(HOME / "data" / "konaclaw.db"); con.executescript(DDL)
+    con.execute("DELETE FROM messages"); con.execute("DELETE FROM conversations")
+    for f in (HOME / "data").glob("conv_*.id"): f.unlink()
     t0 = time.time() - 6 * 86400
     for i, (key, (title, msgs)) in enumerate(TRANSCRIPTS.items()):
         cid = con.execute("INSERT INTO conversations(agent, channel, started_at, pinned, title) VALUES (?,?,?,?,?)",
