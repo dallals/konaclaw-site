@@ -31,3 +31,6 @@ jobs:
         with:
           name: lighthouse
           path: .lighthouseci
+          # .lighthouseci is a dot-directory, and upload-artifact skips hidden paths
+          # by default — without this the step warns "no files found" and uploads nothing.
+          include-hidden-files: true
