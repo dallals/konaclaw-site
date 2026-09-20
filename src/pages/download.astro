@@ -137,7 +137,7 @@ for (const c of CHIPS) {
                     <td>{c.cpu}&nbsp;·&nbsp;{c.gpu}</td>
                     <td>{memLabel(c.mem)}</td>
                     <td>{bwLabel(c.bw)}</td>
-                    <td class="prefill">{range(prefillRange(c, DEFAULT_CTX))}&nbsp;tk/s</td>
+                    <td class="prefill"><span class="pf-num">{range(prefillRange(c, DEFAULT_CTX))}&nbsp;tk/s</span>{c.ppEst && <abbr class="est" title="Interpolated from sibling chips: this one has no measured row in the source benchmark">est</abbr>}</td>
                     <td>
                       <span class="speed">
                         <span class="bar"><i style={`width:${Math.max(2, Math.round((gen[1] / top) * 100))}%`}></i></span>
@@ -154,7 +154,7 @@ for (const c of CHIPS) {
       </table>
     </div>
 
-    <p class="mt-4 text-sm text-muted-aa"><strong>Where these numbers come from.</strong> Core counts, memory options and bandwidth are Apple's published specifications. Everything else is <em>derived, not measured</em>. {MODEL} is a hybrid: only 16 of its 64 layers carry a growing KV cache (the other 48 are Gated&nbsp;DeltaNet, which keeps a fixed-size state), so it costs ~64&nbsp;KB per token &mdash; about a quarter of a conventional model this size, and the reason long context is affordable here at all. Generation is <em>bandwidth&nbsp;&times;&nbsp;0.8&nbsp;&divide;&nbsp;(weights&nbsp;+&nbsp;cache)</em>; the 0.8 is what MLX reaches against peak, anchored on the one public measurement we could find &mdash; a 32&nbsp;GB M4 Mac&nbsp;mini at 5&ndash;6&nbsp;tok/s. Prefill assumes 2&nbsp;&times;&nbsp;27e9 FLOPs per token at ~45% GPU utilisation and is the least certain column on this page: no public benchmark of this model on Apple silicon exists yet, and the M5/M6 neural accelerators make the estimate shakier still. <strong>M1 and M2 owners:</strong> a 27B does not fit in 16&nbsp;GB, and at 8&nbsp;GB nothing past 7B does &mdash; KonaClaw offers you Qwen3&nbsp;8B instead, which runs well. We publish measured numbers the week we have them, from KonaClaw's first-launch benchmark on your exact silicon.</p>
+    <p class="mt-4 text-sm text-muted-aa"><strong>Where these numbers come from.</strong> Core counts, memory options and bandwidth are Apple's published specifications. The rest is derived, and here is exactly how. {MODEL} is a hybrid: only 16 of its 64 layers carry a growing KV cache (the other 48 are Gated&nbsp;DeltaNet, which keeps a fixed-size state), so it costs ~64&nbsp;KB per token &mdash; about a quarter of a conventional model this size, and the reason long context is affordable here at all. <strong>Generation</strong> is <em>bandwidth&nbsp;&times;&nbsp;0.8&nbsp;&divide;&nbsp;(weights&nbsp;+&nbsp;cache)</em>; the 0.8 is what MLX reaches against peak, anchored on the one public measurement we could find &mdash; a 32&nbsp;GB M4 Mac&nbsp;mini at 5&ndash;6&nbsp;tok/s. <strong>Prefill</strong> starts from measured <a href="https://github.com/ggml-org/llama.cpp/discussions/4167" rel="nofollow noopener">llama-bench pp512 figures for LLaMA&nbsp;7B</a> on each chip, rescaled by 7/27 &mdash; treat it as a floor: those runs mix quantizations and use llama.cpp rather than MLX, which prefills faster. Three chips (M5, M5&nbsp;Ultra, M6) have no row in that thread and are interpolated from their siblings, marked <abbr class="est">est</abbr>. <strong>M1 and M2 owners:</strong> a 27B does not fit in 16&nbsp;GB, and at 8&nbsp;GB nothing past 7B does &mdash; KonaClaw offers you Qwen3&nbsp;8B instead, which runs well. We replace all of this with measured numbers from KonaClaw's first-launch benchmark on your exact silicon the week we have them.</p>
   </section>
 </Base>
 
@@ -181,8 +181,10 @@ for (const c of CHIPS) {
       if (bar) bar.style.width = Math.max(2, Math.round((gen[1] / top) * 100)) + "%";
       if (num) num.innerHTML = range(gen) + " <small>tk/s</small>";
 
-      const pf = tr.querySelector<HTMLElement>(".prefill");
-      if (pf) pf.textContent = range(prefillRange(c, ctxK)) + " tk/s";
+      // Target the span, not the cell: the "est" marker sits beside it and
+      // setting textContent on the whole <td> would wipe it.
+      const pf = tr.querySelector<HTMLElement>(".prefill .pf-num");
+      if (pf) pf.textContent = range(prefillRange(c, ctxK)) + "\u00a0tk/s";
 
       const fit = fitFor(c, ctxK);
       const el = tr.querySelector<HTMLElement>(".fit");

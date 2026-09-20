@@ -20,15 +20,23 @@
  * reaches. Anchored on the one public measurement: a 32 GB M4 Mac mini
  * (120 GB/s) at 4-bit MLX runs 5–6 tok/s, and 120 × 0.8 / 19.25 = 5.0.
  *
- * Prefill is compute-bound. Cost per token is 2 × 27e9 FLOPs of dense work
- * plus attention that grows with position — but only across 16 layers, so the
- * crossover where attention equals everything else sits near 137 K tokens:
+ * Prefill is compute-bound, so it scales with parameter count rather than
+ * bandwidth. Each chip carries a MEASURED llama-bench pp512 figure for LLaMA 7B
+ * from the llama.cpp Apple-silicon thread (discussion #4167), rescaled by
+ * 7/27. That beats extrapolating from GPU FLOPs, which ran ~40% low on M1–M4
+ * and 3× low on M5 — the M5 neural accelerators do 3.5× the prompt processing
+ * of an M4 Pro at the same 20 GPU cores, and no FLOP model predicted that.
+ *
+ * Attention grows with position, but across only 16 of the 64 layers, so the
+ * crossover where attention costs as much as everything else sits near 137 K:
  *
  *   4 × n × (24 heads × 256 dim) × 16 layers = 2 × 27e9   →   n ≈ 137,000
  *
- * Prefill is the least certain column: no public measurement exists for this
- * model on Apple silicon, and the M5/M6 neural accelerators make FLOP-based
- * extrapolation shakier still. It is labelled as derived in the UI.
+ * Caveats, both stated on the page: the source rows mix quantizations (M5 is
+ * Q4_0, the rest F16/Q8_0 — which if anything understates M1–M4 for our 4-bit
+ * workload), and it is llama.cpp/Metal rather than MLX, which prefills faster.
+ * Treat the column as a floor. M5, M5 Ultra and M6 have no row in #4167 and
+ * are interpolated from their siblings; those are flagged in the table.
  */
 
 export const MODEL = "Qwen3.8-27B";
@@ -41,10 +49,8 @@ export const KV_PER_TOKEN = 65536 / 1024 ** 3;
 export const OVERHEAD = 2;
 /** Share of peak memory bandwidth MLX reaches in practice. */
 export const GEN_EFFICIENCY = 0.8;
-/** Share of peak GPU FLOPs reached during prefill. */
-export const PREFILL_MFU = 0.45;
-/** Dense FLOPs per prefilled token: 2 × 27e9. */
-export const FLOPS_PER_TOKEN = 5.4e10;
+/** Parameter ratio between the benchmarked LLaMA 7B and this model. */
+export const PARAM_SCALE = 7 / 27;
 /** Context at which attention cost equals the dense cost, in K tokens. */
 export const ATTN_CROSSOVER_K = 137;
 /** GB held back for macOS and everything else you have open. */
@@ -66,78 +72,80 @@ export interface Chip {
   mem: number[];
   /** Peak memory bandwidth, GB/s. A pair when configs differ. */
   bw: number | [number, number];
-  /** Peak GPU throughput, TFLOPS fp16. Apple publishes none of these; every
-   *  figure here is a community estimate, so prefill inherits that softness. */
-  tflops: number;
+  /** llama-bench pp512 on LLaMA 7B, tok/s — measured, from llama.cpp
+   *  discussion #4167, except where `ppEst` says otherwise. */
+  pp512: number;
+  /** Set when pp512 is interpolated from siblings rather than measured. */
+  ppEst?: boolean;
 }
 
 /* Bandwidth, core counts and memory options are Apple's published figures. */
 export const CHIPS: Chip[] = [
   { name: "M1",       family: "M1 — 2020 · 5 nm",
     where: "Air · mini · 13″ Pro", cpu: "8", gpu: "7–8",
-    mem: [8, 16], bw: 68, tflops: 2.6 },
+    mem: [8, 16], bw: 68, pp512: 117 },
   { name: "M1 Pro",   family: "M1 — 2020 · 5 nm",
     where: "14″/16″ MBP · mini", cpu: "8–10", gpu: "14–16",
-    mem: [16, 32], bw: 200, tflops: 5.2 },
+    mem: [16, 32], bw: 200, pp512: 302 },
   { name: "M1 Max",   family: "M1 — 2020 · 5 nm",
     where: "MBP · Studio", cpu: "10", gpu: "24–32",
-    mem: [32, 64], bw: 400, tflops: 10.4 },
+    mem: [32, 64], bw: 400, pp512: 600 },
   { name: "M1 Ultra", family: "M1 — 2020 · 5 nm",
     where: "Studio", cpu: "20", gpu: "48–64",
-    mem: [64, 128], bw: 800, tflops: 21 },
+    mem: [64, 128], bw: 800, pp512: 1169 },
 
   { name: "M2",       family: "M2 — 2022 · 5 nm (2nd gen)",
     where: "Air · mini · 13″ Pro", cpu: "8", gpu: "8–10",
-    mem: [8, 16, 24], bw: 100, tflops: 3.6 },
+    mem: [8, 16, 24], bw: 100, pp512: 201 },
   { name: "M2 Pro",   family: "M2 — 2022 · 5 nm (2nd gen)",
     where: "14″/16″ MBP · mini", cpu: "10–12", gpu: "16–19",
-    mem: [16, 32], bw: 200, tflops: 6.8 },
+    mem: [16, 32], bw: 200, pp512: 384 },
   { name: "M2 Max",   family: "M2 — 2022 · 5 nm (2nd gen)",
     where: "MBP · Studio", cpu: "12", gpu: "30–38",
-    mem: [32, 64, 96], bw: 400, tflops: 13.6 },
+    mem: [32, 64, 96], bw: 400, pp512: 756 },
   { name: "M2 Ultra", family: "M2 — 2022 · 5 nm (2nd gen)",
     where: "Studio · Mac Pro", cpu: "24", gpu: "60–76",
-    mem: [64, 128, 192], bw: 800, tflops: 27.2 },
+    mem: [64, 128, 192], bw: 800, pp512: 1402 },
 
   { name: "M3",       family: "M3 — 2023 · 3 nm · Dynamic Caching",
     where: "Air · 14″ Pro · iMac", cpu: "8", gpu: "8–10",
-    mem: [8, 16, 24], bw: 100, tflops: 4.1 },
+    mem: [8, 16, 24], bw: 100, pp512: 188 },
   { name: "M3 Pro",   family: "M3 — 2023 · 3 nm · Dynamic Caching",
     where: "14″/16″ MBP", cpu: "11–12", gpu: "14–18",
-    mem: [18, 36], bw: 150, tflops: 7.4 },
+    mem: [18, 36], bw: 150, pp512: 357 },
   { name: "M3 Max",   family: "M3 — 2023 · 3 nm · Dynamic Caching",
     where: "MBP", cpu: "14–16", gpu: "30–40",
-    mem: [36, 48, 64, 96, 128], bw: [300, 400], tflops: 16.4 },
+    mem: [36, 48, 64, 96, 128], bw: [300, 400], pp512: 779 },
   { name: "M3 Ultra", family: "M3 — 2023 · 3 nm · Dynamic Caching",
     where: "Studio", cpu: "28–32", gpu: "60–80",
-    mem: [96, 192, 256, 512], bw: 800, tflops: 32.8 },
+    mem: [96, 192, 256, 512], bw: 800, pp512: 1538 },
 
   { name: "M4",       family: "M4 — 2024 · 3 nm (2nd gen) · ray tracing",
     where: "Air · mini · iMac · MBP", cpu: "10", gpu: "10",
-    mem: [16, 24, 32], bw: 120, tflops: 4.6 },
+    mem: [16, 24, 32], bw: 120, pp512: 230 },
   { name: "M4 Pro",   family: "M4 — 2024 · 3 nm (2nd gen) · ray tracing",
     where: "MBP · mini", cpu: "12–14", gpu: "16–20",
-    mem: [24, 48, 64], bw: 273, tflops: 9.2 },
+    mem: [24, 48, 64], bw: 273, pp512: 464 },
   { name: "M4 Max",   family: "M4 — 2024 · 3 nm (2nd gen) · ray tracing",
     where: "MBP · Studio", cpu: "14–16", gpu: "32–40",
-    mem: [36, 48, 64, 128], bw: [410, 546], tflops: 18.4 },
+    mem: [36, 48, 64, 128], bw: [410, 546], pp512: 923 },
 
   { name: "M5",       family: "M5 — 2025 · 3 nm (3rd gen) · neural accelerators",
     where: "14″ MBP · iPad Pro", cpu: "10", gpu: "10",
-    mem: [16, 24, 32], bw: 153, tflops: 9 },
+    mem: [16, 24, 32], bw: 153, pp512: 810, ppEst: true },
   { name: "M5 Pro",   family: "M5 — 2025 · 3 nm (3rd gen) · neural accelerators",
     where: "MBP · mini", cpu: "18", gpu: "20–40",
-    mem: [24, 36, 48, 64, 128], bw: 307, tflops: 18 },
+    mem: [24, 36, 48, 64, 128], bw: 307, pp512: 1621 },
   { name: "M5 Max",   family: "M5 — 2025 · 3 nm (3rd gen) · neural accelerators",
     where: "MBP · Studio", cpu: "18", gpu: "32–40",
-    mem: [36, 48, 64, 128], bw: [460, 614], tflops: 28 },
+    mem: [36, 48, 64, 128], bw: [460, 614], pp512: 3220 },
   { name: "M5 Ultra", family: "M5 — 2025 · 3 nm (3rd gen) · neural accelerators",
     where: "Studio", cpu: "up to 36", gpu: "up to 80",
-    mem: [96, 192, 256, 512], bw: 1200, tflops: 56 },
+    mem: [96, 192, 256, 512], bw: 1200, pp512: 6215, ppEst: true },
 
   { name: "M6",       family: "M6 — 2026 · 2 nm",
     where: "mini", cpu: "12", gpu: "12",
-    mem: [16, 32], bw: 170, tflops: 11 },
+    mem: [16, 32], bw: 170, pp512: 1264, ppEst: true },
 ];
 
 export const CONTEXTS = [4, 8, 32, 128, 256, 1024];
@@ -155,10 +163,10 @@ export const needGB = (ctxK: number) => WEIGHTS + kvGB(ctxK) + OVERHEAD;
 export const genTokS = (bw: number, ctxK: number) =>
   (bw * GEN_EFFICIENCY) / (WEIGHTS + kvGB(ctxK));
 
-/** Prefill throughput, tok/s. Compute-bound, decaying with context. */
-export const prefillTokS = (tflops: number, ctxK: number) =>
-  ((tflops * 1e12 * PREFILL_MFU) / FLOPS_PER_TOKEN) /
-  (1 + ctxK / ATTN_CROSSOVER_K);
+/** Prefill throughput, tok/s. Measured 7B pp512 rescaled by params, then
+ *  decayed for attention that grows with position. */
+export const prefillTokS = (pp512: number, ctxK: number) =>
+  (pp512 * PARAM_SCALE) / (1 + ctxK / ATTN_CROSSOVER_K);
 
 /** Both ends of a chip's generation range. */
 export const genRange = (c: Chip, ctxK: number): [number, number] =>
@@ -166,7 +174,7 @@ export const genRange = (c: Chip, ctxK: number): [number, number] =>
 
 /** Both ends of a chip's prefill range. */
 export const prefillRange = (c: Chip, ctxK: number): [number, number] => {
-  const t = prefillTokS(c.tflops, ctxK);
+  const t = prefillTokS(c.pp512, ctxK);
   return [t, t];
 };
 
