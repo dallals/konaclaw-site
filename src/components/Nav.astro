@@ -9,13 +9,114 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 <header class="nav-glass border-b border-line">
   <span aria-hidden="true" class="scroll-progress"></span>
-  <nav aria-label="Primary" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
-    <a href="/" aria-label="KonaClaw home" class="no-underline transition hover:opacity-80"><Mark /></a>
-    <ul class="flex items-center gap-6 text-sm">
+  <nav aria-label="Primary" class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5">
+    <a href="/" aria-label="KonaClaw home" class="nav-brand shrink-0 no-underline transition hover:opacity-80">
+      <span class="hidden sm:inline-flex"><Mark /></span>
+      <span class="sm:hidden"><Mark wordmark={false} /></span>
+    </a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle menu">
+      <span aria-hidden="true"></span>
+    </button>
+    <ul id="nav-menu" class="nav-links flex items-center gap-6 text-sm">
       {items.map((i) => (
         <li><a href={i.href} aria-current={path === i.href ? "page" : undefined}
-               class="text-text no-underline transition hover:text-accent-deep aria-[current=page]:text-accent-deep aria-[current=page]:font-medium">{i.label}</a></li>
+               class="nav-link text-text no-underline transition hover:text-accent-deep aria-[current=page]:text-accent-deep aria-[current=page]:font-medium">{i.label}</a></li>
       ))}
     </ul>
   </nav>
 </header>
+
+<style is:global>
+  /* Animated underline; stays lit on the active page (aria-current). */
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, rgb(var(--accent)), rgb(var(--warn)));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .nav-link:hover::after { transform: scaleX(1); }
+  .nav-link[aria-current="page"]::after { transform: scaleX(1); }
+
+  /* Hamburger: JS-free phones get scrollable inline links (see :not(.js));
+     with JS the links collapse behind this toggle. */
+  .nav-toggle { display: none; }
+
+  @media (max-width: 639.98px) {
+    /* Without JS the toggle can't toggle — hide it, keep scrollable links. */
+    html:not(.js) .nav-toggle { display: none; }
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border: 1px solid rgb(var(--line-bright));
+      border-radius: 10px;
+      background: rgb(var(--panel));
+      cursor: pointer;
+    }
+    .nav-toggle span,
+    .nav-toggle span::before,
+    .nav-toggle span::after {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 2px;
+      border-radius: 2px;
+      background: rgb(var(--text-strong));
+      transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .nav-toggle span { position: relative; }
+    .nav-toggle span::before { position: absolute; left: 0; top: -6px; }
+    .nav-toggle span::after { position: absolute; left: 0; top: 6px; }
+    .nav-open .nav-toggle span { background: transparent; }
+    .nav-open .nav-toggle span::before { transform: translateY(6px) rotate(45deg); }
+    .nav-open .nav-toggle span::after { transform: translateY(-6px) rotate(-45deg); }
+
+    /* No JS: links stay inline and scroll sideways rather than vanishing. */
+    html:not(.js) .nav-links {
+      gap: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      white-space: nowrap;
+    }
+
+    /* With JS: collapse into a dropdown under the bar. */
+    .js .nav-links {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 6px 20px 12px;
+      background: rgb(var(--bg) / 0.96);
+      -webkit-backdrop-filter: blur(14px) saturate(1.4);
+      backdrop-filter: blur(14px) saturate(1.4);
+      border-bottom: 1px solid rgb(var(--line));
+      box-shadow: 0 20px 36px -24px rgb(var(--text) / 0.35);
+    }
+    .js .nav-links li { width: 100%; }
+    .js .nav-link { display: block; padding: 12px 2px; font-size: 15px; }
+    .js .nav-link::after { bottom: 6px; }
+    .js .nav-open .nav-links { display: flex; animation: nav-drop 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    @keyframes nav-drop {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js .nav-open .nav-links { animation: none; }
+  }
+</style>

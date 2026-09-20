@@ -8,12 +8,13 @@ const showcase = [
   { src: "chat-brief.png", alt: "A morning brief message with calendar, inbox, weather and news sections", label: "Morning brief" },
 ];
 ---
-<section data-hero class="relative overflow-x-clip pt-20 text-center md:pt-28">
+<section data-hero class="hero-bleed relative overflow-x-clip pt-20 text-center md:pt-28">
   <div aria-hidden="true" class="hero-glow"></div>
   <div class="relative mx-auto max-w-3xl">
-    <p class="rise inline-flex items-center gap-2 rounded-full border border-line-bright bg-panel px-4 py-1.5 text-sm text-muted-aa">
-      <span class="h-2 w-2 rounded-full bg-ok-aa"></span>
-      Local models · no account · nothing leaves your Mac
+    <p class="rise inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-line-bright bg-panel px-4 py-1.5 text-sm text-muted-aa">
+      <span class="h-2 w-2 shrink-0 rounded-full bg-ok-aa"></span>
+      <span class="hidden sm:inline">Local models · no account · nothing leaves your Mac</span>
+      <span class="sm:hidden">Local models · no account</span>
     </p>
     <h1 class="rise rise-1 mt-6 text-5xl font-semibold leading-[1.05] tracking-tight text-text-strong md:text-7xl">
       Your assistant.<br />

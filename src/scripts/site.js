@@ -26,6 +26,24 @@ if (nav) {
   onScroll();
 }
 
+/* ---- Mobile nav disclosure ---- */
+const navToggle = document.querySelector(".nav-toggle");
+const navHeader = document.querySelector("header.nav-glass");
+const navMenu = document.getElementById("nav-menu");
+if (navToggle && navHeader && navMenu) {
+  const setOpen = (open) => {
+    navHeader.classList.toggle("nav-open", open);
+    navToggle.setAttribute("aria-expanded", String(open));
+  };
+  navToggle.addEventListener("click", () => setOpen(!navHeader.classList.contains("nav-open")));
+  navMenu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  // Desktop breakpoint: undo the collapsed state so links show again.
+  const mq = matchMedia("(min-width: 640px)");
+  const sync = () => { if (mq.matches) setOpen(false); };
+  mq.addEventListener("change", sync);
+}
+
 /* ---- Scroll reveals: sections and cards rise into view ---- */
 const revealEls = document.querySelectorAll(".reveal");
 if (revealEls.length) {

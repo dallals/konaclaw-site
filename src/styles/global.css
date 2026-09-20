@@ -42,10 +42,19 @@
 .prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
 .prose-kc p  { max-width: 65ch; line-height: 1.65; margin: 0.75rem 0; }
 
-/* Hero: soft cinnamon aurora behind the headline, warm glow cradling the shot. */
+/* Full-bleed: breaks the section out of main's max-w-6xl so the aurora
+   reaches the viewport edges instead of being sliced by the container. */
+.hero-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+}
+
+/* Hero: soft cinnamon aurora behind the headline, warm glow cradling the shot.
+   Inset is flush (0) on the full-bleed section: the gradients fade to
+   transparent well before the edge, so overflow-x-clip leaves no seam. */
 .hero-glow {
   position: absolute;
-  inset: -10% -20% auto -20%;
+  inset: 0 0 auto 0;
   height: 130%;
   z-index: -1;
   background:
@@ -146,12 +155,22 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  opacity: 0;
-  transform: scale(0.985);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .shot-pane:first-child { position: relative; } /* sizes the stage */
-.shot-pane.is-active { opacity: 1; transform: scale(1); }
+/* No JS: the first pane shows and the rest (which can't be switched to) hide. */
+html:not(.js) .shot-pane:not(:first-child) { display: none; }
+/* JS takes over: panes fade out first, then the next fades in, so two
+   dense screenshots never overlap mid-crossfade and ghost readable text. */
+.js .shot-pane {
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.js .shot-pane.is-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.35s ease 0.2s, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
+}
 @media (prefers-reduced-motion: reduce) {
   .shot-pane { transition: none; }
 }
