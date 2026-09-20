@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS messages (
 TRANSCRIPTS = {
   "week": ("This week", [
     ("user", "What does my week look like?"),
-    ("assistant", "Here's your week:\n\n**Mon** — 9:30 Design review (Room 4B) · 12:00 Lunch with Priya Nair\n**Tue** — 8:00 Dentist, Dr. Okafor · 15:00 Quarterly planning\n**Wed** — Free until 16:00 · 16:00 Parent–teacher conference\n**Thu** — 10:00 1:1 with Marcus · 18:30 Pottery class\n**Fri** — 11:00 Flight to Denver (UA 1187)\n\nTuesday is the tight one. Want me to move the dentist to next week so the morning is clear before planning?"),
+    ("assistant", "Here's your week:\n\n**Mon** — 9:30 Design review (Room 4B) · 12:00 Lunch with Priya Nair\n\n**Tue** — 8:00 Dentist, Dr. Okafor · 15:00 Quarterly planning\n\n**Wed** — Free until 16:00 · 16:00 Parent–teacher conference\n\n**Thu** — 10:00 1:1 with Marcus · 18:30 Pottery class\n\n**Fri** — 11:00 Flight to Denver (UA 1187)\n\nTuesday is the tight one. Want me to move the dentist to next week so the morning is clear before planning?"),
     ("user", "Yes, move it to next Tuesday same time."),
     ("assistant", "Done. Dentist with Dr. Okafor is now **Tue Sep 30 at 8:00**. I left a note on the old slot so you know why it moved."),
   ]),
@@ -56,7 +56,7 @@ TRANSCRIPTS = {
   ]),
   "skill": ("Weekly report", [
     ("user", "/weekly-report"),
-    ("assistant", "Running **weekly-report**…\n\n✅ Pulled last week's closed tasks (23)\n✅ Summarized by project (Onboarding, Billing, Mobile)\n✅ Wrote `Weekly Report — Sep 8–12.docx` to the shared folder\n\nHighlights: Onboarding shipped the new checklist; Billing closed the double-charge bug; Mobile is one review away from the 2.4 release. Open the report?"),
+    ("assistant", "Running **weekly-report**…\n\n✅ Pulled last week's closed tasks (23)\n\n✅ Summarized by project (Onboarding, Billing, Mobile)\n\n✅ Wrote `Weekly Report — Sep 8–12.docx` to the shared folder\n\nHighlights: Onboarding shipped the new checklist; Billing closed the double-charge bug; Mobile is one review away from the 2.4 release. Open the report?"),
   ]),
   "web": ("Compare stand mixers", [
     ("user", "Compare the two stand mixers I bookmarked and tell me which to get."),

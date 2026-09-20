@@ -1,8 +1,27 @@
 #!/bin/bash
 # Boots a demo supervisor + dashboard dev server, seeds, captures, tears down.
+#
+#   bash shots/run.sh          seed, capture, tear down (what `make shots` runs)
+#   bash shots/run.sh --keep   seed, then leave both servers up for hand work
+#   bash shots/run.sh --stop   kill the servers a previous --keep left running
 set -euo pipefail
 KC_REPO="${KC_REPO:-$HOME/Desktop/claudeCode/SammyClaw}"
 DEMO="$HOME/KonaClawDemo"
+
+KEEP=0
+case "${1:-}" in
+  --keep) KEEP=1 ;;
+  --stop)
+    stopped=0
+    for pf in "$DEMO/sup.pid" "$DEMO/dash.pid"; do
+      if [ -s "$pf" ] && kill -- -"$(cat "$pf")" 2>/dev/null; then stopped=1; fi
+      rm -f "$pf"
+    done
+    [ "$stopped" = 1 ] && echo "stopped the demo supervisor and dashboard" || echo "nothing was running"
+    exit 0 ;;
+  "") ;;
+  *) echo "usage: bash shots/run.sh [--keep|--stop]" >&2; exit 64 ;;
+esac
 
 # macOS has no `setsid` binary. This one-liner calls the setsid() syscall on
 # itself, writes its OWN pid to a file (argv[1]) — that pid is preserved
@@ -53,6 +72,7 @@ rm -f "$DEMO/sup.pid" "$DEMO/dash.pid"
 # Needs the always-on local engine on :8901 for notebook embeddings
 # (KC_EMBED_*); the pipeline is not hermetic without it.
 ( cd "$KC_REPO/kc-supervisor" && env -i HOME="$HOME" PATH="$PATH" \
+    LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 TMPDIR="${TMPDIR:-/tmp}" \
     KC_HOME="$DEMO" KC_PORT=8766 KC_DEFAULT_AGENT=Kona-AI \
     KC_TRIGGERS_ENABLED=true KC_CHROME_TOKEN=demo-not-a-real-token KC_NOTEBOOKS_ENABLED=true \
     KC_EMBED_BACKEND=engine KC_EMBED_URL=http://127.0.0.1:8901/v1 KC_EMBED_MODEL=modernbert-embed-base \
@@ -71,14 +91,22 @@ python3 shots/seed_triggers.py
     python3 -c "$SETSID_PY" "$DEMO/dash.pid" arch -arm64 npm run dev -- --port 5173 --host 127.0.0.1 >"$DEMO/dashboard.log" 2>&1 ) &
 DASH_PID=$(wait_for_pidfile "$DEMO/dash.pid") || { echo "dashboard never wrote a pidfile; see $DEMO/dashboard.log"; exit 1; }
 for i in $(seq 1 60); do curl -sf http://127.0.0.1:5173 >/dev/null && break; sleep 1; done
+curl -sf http://127.0.0.1:5173 >/dev/null || { echo "dashboard did not come up; see $DEMO/dashboard.log"; exit 1; }
+
+if [ "$KEEP" = 1 ]; then
+  trap - EXIT   # --keep means leave them running; the EXIT trap would kill them
+  echo "demo supervisor: http://127.0.0.1:8766"
+  echo "dashboard:       http://127.0.0.1:5173"
+  echo "run \`bash shots/run.sh --stop\` when done"
+  exit 0
+fi
 
 if [ ! -d "$DEMO/notebooks" ] || [ -z "$(ls -A "$DEMO/notebooks" 2>/dev/null)" ]; then
-  cat <<MSG
+  cat <<'MSG'
 The demo notebook does not exist yet. One-time step, done by hand so it is real:
-  1. Open http://127.0.0.1:5173/notebooks
-  2. Create a notebook named "Field Guide to Local Birds"
-  3. Add two URL sources from Project Gutenberg (public domain), wait for Ready
-  4. Re-run: make shots
+Run `bash shots/run.sh --keep`, open http://127.0.0.1:5173/notebooks, create a
+notebook named "Field Guide to Local Birds" with two Project Gutenberg URL
+sources, wait for Ready, run `bash shots/run.sh --stop`, then `make shots` again.
 MSG
   exit 2
 fi
