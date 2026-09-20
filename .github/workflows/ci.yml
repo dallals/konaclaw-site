@@ -1,5 +1,7 @@
 name: ci
 on: { push: { branches: [main] }, pull_request: {} }
+permissions:
+  contents: read
 jobs:
   site:
     runs-on: ubuntu-latest
@@ -21,6 +23,11 @@ jobs:
           npx playwright test
       - if: always()
         run: npx astro preview stop
-      - uses: lycheeverse/lychee-action@v2
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
         with: { args: "--offline --root-dir ./dist ./dist", fail: true }
       - run: npx lhci autorun
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci
