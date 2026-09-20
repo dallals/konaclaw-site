@@ -8,32 +8,119 @@ import { groupByOutcome, comingSoon, visible, type Feature } from "../lib/featur
 const all = (await getCollection("features")).map((e) => e.data as Feature);
 const groups = groupByOutcome(visible(all));
 const soon = comingSoon(all);
+const shippedCount = visible(all).length;
 ---
 <Base title="Capabilities" description="Everything KonaClaw does, organized by what you want done. Every item runs on your Mac.">
   <div class="flex flex-wrap items-end justify-between gap-4 pt-16">
     <div>
-      <h1 class="text-4xl font-semibold tracking-tight text-text-strong">Everything it does</h1>
-      <p class="mt-3 max-w-prose text-lg text-text">Organized by what you want done. Every item below runs on your Mac unless you deliberately attach a cloud model.</p>
+      <h1 class="text-4xl font-semibold tracking-tight text-text-strong sm:text-5xl">
+        Everything it <span class="text-gradient">does</span>
+      </h1>
+      <p class="mt-3 max-w-prose text-lg text-text">
+        <span class="font-semibold tabular-nums text-accent" data-count={String(shippedCount)}>0</span>
+        things, organized by what you want done. Every item below runs on your Mac unless you deliberately attach a cloud model.
+      </p>
     </div>
     <CapabilityFilter client:idle />
   </div>
 
-  {groups.map((g) => (
-    <section id={g.outcome} class="scroll-mt-24 pt-14">
-      <h2 class="text-2xl font-semibold text-text-strong">{g.title}</h2>
-      <div class="mt-5 grid gap-4 md:grid-cols-2">{g.features.map((f) => <FeatureCard feature={f} />)}</div>
+  {/* Sticky jump rail — tracks the section you're reading, scrolls on click. */}
+  <nav aria-label="Jump to section" class="cap-rail">
+    {groups.map((g, i) => (
+      <a href={`#${g.outcome}`} class:list={["cap-chip", { "is-active": i === 0 }]} data-cap-jump={g.outcome}>
+        <span class="cap-chip-n">{String(i + 1).padStart(2, "0")}</span>
+        <span>{g.title}</span>
+      </a>
+    ))}
+    {soon.length > 0 && (
+      <a href="#coming-in-1-1" class="cap-chip" data-cap-jump="coming-in-1-1">
+        <span class="cap-chip-n">＋</span>
+        <span>In 1.1</span>
+      </a>
+    )}
+  </nav>
+
+  {groups.map((g, i) => (
+    <section id={g.outcome} class="cap-section scroll-mt-40 pt-14" data-cap-section>
+      <div class="reveal flex items-baseline gap-3 cap-h">
+        <span aria-hidden="true" class="text-sm font-semibold tabular-nums text-muted">{String(i + 1).padStart(2, "0")}</span>
+        <h2 class="text-2xl font-semibold text-text-strong">{g.title}</h2>
+        <span aria-hidden="true" class="h-px flex-1 bg-line"></span>
+        <span aria-hidden="true" class="text-sm text-muted">{g.features.length} {g.features.length === 1 ? "item" : "items"}</span>
+      </div>
+      <div class="mt-5 grid gap-4 md:grid-cols-2">
+        {g.features.map((f, j) => (
+          <div class="reveal" style={`transition-delay:${(j % 2) * 110}ms`}>
+            <FeatureCard feature={f} />
+          </div>
+        ))}
+      </div>
     </section>
   ))}
 
   {soon.length > 0 && (
-    <section id="coming-in-1-1" class="scroll-mt-24 pt-14" data-coming-soon>
-      <h2 class="text-2xl font-semibold text-text-strong">Coming in 1.1</h2>
+    <section id="coming-in-1-1" class="cap-section scroll-mt-40 pt-14" data-cap-section data-coming-soon>
+      <div class="reveal flex items-baseline gap-3">
+        <span aria-hidden="true" class="inline-block h-2 w-2 rounded-full bg-warn"></span>
+        <h2 class="text-2xl font-semibold text-text-strong">Coming in 1.1</h2>
+        <span aria-hidden="true" class="h-px flex-1 bg-line"></span>
+      </div>
       <p class="mt-2 max-w-prose text-muted-aa">Built and working, held back from the first release while their setup is made painless.</p>
-      <div class="mt-5 grid gap-4 md:grid-cols-2">{soon.map((f) => <FeatureCard feature={f} />)}</div>
+      <div class="mt-5 grid gap-4 md:grid-cols-2">
+        {soon.map((f, j) => (
+          <div class="reveal" style={`transition-delay:${(j % 2) * 110}ms`}>
+            <FeatureCard feature={f} />
+          </div>
+        ))}
+      </div>
     </section>
   )}
 </Base>
 
 <style is:global>
   html[data-cap-filter="shipped"] [data-coming-soon] { display: none; }
+
+  /* Sticky jump rail */
+  .cap-rail {
+    position: sticky;
+    top: 78px;
+    z-index: 30;
+    display: flex;
+    gap: 8px;
+    margin-top: 28px;
+    padding: 10px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: linear-gradient(rgb(var(--bg)) 62%, transparent);
+  }
+  .cap-rail::-webkit-scrollbar { display: none; }
+  .cap-chip {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--line));
+    background: rgb(var(--panel));
+    color: rgb(var(--muted-aa));
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, transform 0.2s ease;
+  }
+  .cap-chip:hover { color: rgb(var(--text-strong)); border-color: rgb(var(--accent)); transform: translateY(-1px); }
+  .cap-chip.is-active {
+    background: rgb(var(--btn));
+    border-color: rgb(var(--btn));
+    color: rgb(var(--on-accent));
+  }
+  .cap-chip-n {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    font-variant-numeric: tabular-nums;
+  }
 </style>

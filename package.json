@@ -5,6 +5,10 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "browserslist": [
+    "defaults",
+    "maintained node versions"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build --force",

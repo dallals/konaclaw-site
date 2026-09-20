@@ -41,3 +41,156 @@
 }
 .prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
 .prose-kc p  { max-width: 65ch; line-height: 1.65; margin: 0.75rem 0; }
+
+/* Hero: soft cinnamon aurora behind the headline, warm glow cradling the shot. */
+.hero-glow {
+  position: absolute;
+  inset: -10% -20% auto -20%;
+  height: 130%;
+  z-index: -1;
+  background:
+    radial-gradient(45% 40% at 30% 20%, rgb(var(--accent-bright) / 0.16), transparent 70%),
+    radial-gradient(40% 45% at 72% 30%, rgb(var(--warn) / 0.12), transparent 70%),
+    radial-gradient(55% 50% at 50% 85%, rgb(var(--accent) / 0.10), transparent 70%);
+  pointer-events: none;
+}
+.text-gradient {
+  background: linear-gradient(100deg, rgb(var(--accent-deep)) 0%, rgb(var(--accent-bright)) 55%, rgb(var(--warn)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .text-gradient {
+    background: linear-gradient(100deg, rgb(var(--accent)) 0%, rgb(var(--accent-bright)) 55%, rgb(var(--warn-aa)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+.shot-spot::before {
+  content: "";
+  position: absolute;
+  inset: 8% -6% -18% -6%;
+  z-index: -1;
+  background: radial-gradient(60% 60% at 50% 45%, rgb(var(--accent-bright) / 0.28), transparent 72%);
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+/* Sticky glass nav. bg uses the page color at partial alpha so the blur reads. */
+.nav-glass {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgb(var(--bg) / 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .rise-1 { animation-delay: 0.05s; }
+  .rise-2 { animation-delay: 0.15s; }
+  .rise-3 { animation-delay: 0.25s; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ---- Scroll progress hairline, lives inside the sticky nav ---- */
+.scroll-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgb(var(--accent)), rgb(var(--warn)));
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+}
+
+/* Nav gains a soft edge once content scrolls under it. */
+.nav-scrolled { box-shadow: 0 1px 0 rgb(var(--line)), 0 8px 24px -16px rgb(var(--text) / 0.25); }
+
+/* ---- Scroll reveals (JS adds .is-in; .reveal hidden only when JS runs) ---- */
+.js .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---- Screenshot tilt + cursor glare ---- */
+[data-tilt] {
+  position: relative;
+  transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-tilt] { transform: none; transition: none; }
+}
+.shot-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(28rem 28rem at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.14), transparent 65%);
+}
+.shot-tilt-wrap:hover .shot-sheen, .shot-pane:hover .shot-sheen { opacity: 1; }
+
+/* ---- Hero screenshot stack: tabs + crossfade ---- */
+.shot-stage { position: relative; }
+.shot-pane {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.shot-pane:first-child { position: relative; } /* sizes the stage */
+.shot-pane.is-active { opacity: 1; transform: scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .shot-pane { transition: none; }
+}
+/* Gentle Ken Burns drift on the active hero shot, so each frame feels alive. */
+@media (prefers-reduced-motion: no-preference) {
+  .shot-stack .shot-pane.is-active img { animation: kenburns 9s ease-out both; }
+  @keyframes kenburns {
+    from { transform: scale(1.045); }
+    to   { transform: scale(1); }
+  }
+}
+.shot-tab {
+  appearance: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--color-muted-aa);
+  border-radius: 0.5rem 0.5rem 0 0;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.shot-tab:hover { color: var(--color-text-strong); background: rgb(var(--panel-2) / 0.7); }
+.shot-tab[aria-selected="true"] {
+  color: var(--color-text-strong);
+  border-bottom-color: var(--color-accent);
+}
+
+/* ---- Spotlight glow following the cursor across assurance cards ---- */
+[data-spotlight] { position: relative; isolation: isolate; overflow: hidden; }
+[data-spotlight]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(20rem 20rem at var(--mx, 50%) var(--my, 50%), rgb(var(--accent-bright) / 0.14), transparent 70%);
+}
+[data-spotlight]:hover::after { opacity: 1; }

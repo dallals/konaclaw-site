@@ -4,7 +4,7 @@ import StatusBadge from "./StatusBadge.astro";
 interface Props { feature: Feature }
 const { feature: f } = Astro.props;
 ---
-<article id={cardId(f.id)} class="scroll-mt-24 rounded-lg border border-line bg-panel p-5" data-status={f.status}>
+<article id={cardId(f.id)} data-spotlight class="scroll-mt-24 rounded-lg border border-line bg-panel p-5 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_18px_40px_-20px_rgb(0_0_0/0.55)]" data-status={f.status}>
   <div class="mb-1 flex items-center justify-between gap-3">
     <h3 class="text-base font-semibold text-text-strong">{f.name}</h3>
     {f.status !== "planned" && <StatusBadge status={f.status} />}

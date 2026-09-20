@@ -1,21 +1,37 @@
 ---
-import Shot from "./Shot.astro";
+import ShotTabs from "./ShotTabs.astro";
+
+const showcase = [
+  { src: "chat-week.png", alt: "KonaClaw answering a question about the week ahead from the user's own calendar", label: "Your week, answered" },
+  { src: "chat-mail.png", alt: "Kona summarizing a mail thread and drafting a reply", label: "Mail, handled" },
+  { src: "chat-memory.png", alt: "Kona recalling a fact the user mentioned in an earlier conversation", label: "It remembers" },
+  { src: "chat-brief.png", alt: "A morning brief message with calendar, inbox, weather and news sections", label: "Morning brief" },
+];
 ---
-<section class="grid items-center gap-10 pt-16 md:grid-cols-2 md:pt-24">
-  <div>
-    <h1 class="text-4xl font-semibold leading-tight tracking-tight text-text-strong md:text-5xl">
-      A personal assistant that lives on your Mac. Only your Mac.
-    </h1>
-    <p class="mt-5 max-w-prose text-lg leading-relaxed text-text">
-      KonaClaw reads your calendar, your mail, and your notes, remembers what you tell it,
-      and does the boring parts of your day. It runs on your own Apple-silicon Mac, so none
-      of that ever leaves the room.
+<section data-hero class="relative overflow-x-clip pt-20 text-center md:pt-28">
+  <div aria-hidden="true" class="hero-glow"></div>
+  <div class="relative mx-auto max-w-3xl">
+    <p class="rise inline-flex items-center gap-2 rounded-full border border-line-bright bg-panel px-4 py-1.5 text-sm text-muted-aa">
+      <span class="h-2 w-2 rounded-full bg-ok-aa"></span>
+      Local models · no account · nothing leaves your Mac
     </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a href="/download" class="rounded-lg bg-btn px-5 py-3 font-medium text-on-accent no-underline hover:opacity-90">Get notified at launch</a>
-      <a href="/capabilities" class="rounded-lg border border-line-bright px-5 py-3 font-medium text-text no-underline hover:bg-panel">See everything it does</a>
+    <h1 class="rise rise-1 mt-6 text-5xl font-semibold leading-[1.05] tracking-tight text-text-strong md:text-7xl">
+      Your assistant.<br />
+      <span class="text-gradient">On your Mac.</span><br />
+      Only your Mac.
+    </h1>
+    <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text md:text-xl">
+      KonaClaw reads your calendar, your mail, and your notes, remembers what you tell it,
+      and does the boring parts of your day. The model runs on your own Apple-silicon GPU,
+      so none of that ever leaves the room.
+    </p>
+    <div class="rise rise-2 mt-9 flex flex-wrap justify-center gap-3">
+      <a href="/download" class="rounded-lg bg-btn px-6 py-3.5 font-medium text-on-accent no-underline shadow-[0_10px_30px_-10px_rgb(var(--accent)/0.6)] transition hover:opacity-90">Get notified at launch</a>
+      <a href="/capabilities" class="rounded-lg border border-line-bright px-6 py-3.5 font-medium text-text no-underline transition hover:bg-panel">See everything it does</a>
     </div>
     <p class="mt-4 text-sm text-muted-aa">Free trial at launch, then a paid license. macOS on Apple silicon.</p>
   </div>
-  <Shot src="chat-week.png" alt="KonaClaw answering a question about the week ahead from the user's own calendar" priority />
+  <div class="rise rise-3 relative mx-auto mt-14 max-w-4xl">
+    <ShotTabs shots={showcase} />
+  </div>
 </section>

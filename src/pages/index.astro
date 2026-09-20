@@ -3,9 +3,24 @@ import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import IdeaSection from "../components/IdeaSection.astro";
 import WaitlistForm from "../components/WaitlistForm.astro";
+
+const assurances = [
+  { t: "Runs on the GPU in your Mac", d: "No account, no API key, no server in the middle." },
+  { t: "Reads your real apps", d: "Calendar, Mail, Notes, Contacts, Reminders." },
+  { t: "You hold the kill switch", d: "Every permission and every memory, revocable." },
+];
 ---
 <Base title="KonaClaw" description="A personal AI assistant that runs entirely on your Mac. Reads your calendar, mail and notes, remembers you, and does things while you are away. Nothing leaves the machine.">
   <Hero />
+
+  <section aria-label="What matters" class="mt-16 grid gap-4 sm:grid-cols-3">
+    {assurances.map((a) => (
+      <div class="reveal rounded-xl border border-line bg-panel/60 p-5 transition-colors hover:border-line-bright" data-spotlight>
+        <p class="font-medium text-text-strong">{a.t}</p>
+        <p class="mt-1 text-sm leading-relaxed text-muted-aa">{a.d}</p>
+      </div>
+    ))}
+  </section>
 
   <IdeaSection outcome="private" shot="models.png" alt="The Models tab showing locally installed models and the embedded engine">
     The model runs on your own Mac's GPU. Your conversations, your calendar, your mail
@@ -31,9 +46,10 @@ import WaitlistForm from "../components/WaitlistForm.astro";
     reports back when it is done.
   </IdeaSection>
 
-  <section class="mt-8 rounded-2xl border border-line bg-panel px-6 py-12 text-center md:px-16">
-    <h2 class="text-3xl font-semibold tracking-tight text-text-strong">Be first to know when it ships</h2>
-    <p class="mx-auto mt-3 max-w-prose text-text">Free trial at launch, then a paid license. Pricing is announced at launch. Leave an email and you will hear the day the download is live.</p>
-    <div class="mx-auto mt-6 flex justify-center"><WaitlistForm /></div>
+  <section class="relative mt-8 overflow-hidden rounded-2xl border border-line-bright bg-panel px-6 py-14 text-center md:px-16">
+    <div aria-hidden="true" class="hero-glow"></div>
+    <h2 class="relative text-3xl font-semibold tracking-tight text-text-strong md:text-4xl">Be first to know when it ships</h2>
+    <p class="relative mx-auto mt-3 max-w-prose text-text">Free trial at launch, then a paid license. Pricing is announced at launch. Leave an email and you will hear the day the download is live.</p>
+    <div class="relative mx-auto mt-7 flex justify-center"><WaitlistForm /></div>
   </section>
 </Base>

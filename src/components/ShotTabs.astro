@@ -1,0 +1,37 @@
+---
+import { Image } from "astro:assets";
+interface Pane { src: string; alt: string; label: string }
+interface Props { shots: Pane[] }
+const { shots } = Astro.props;
+const glob = import.meta.glob<{ default: ImageMetadata }>("/src/assets/shots/*.png", { eager: true });
+---
+<div class="shot-stack" data-stack>
+  <div role="tablist" aria-label="Screenshots" class="relative z-10 -mb-px flex flex-wrap justify-center gap-1 px-2">
+    {shots.map((s, i) => (
+      <button type="button" role="tab" id={`shot-tab-${i}`} aria-controls={`shot-pane-${i}`}
+              aria-selected={i === 0 ? "true" : "false"} tabindex={i === 0 ? 0 : -1}
+              class="shot-tab">{s.label}</button>
+    ))}
+  </div>
+  <div class="shot-stage shot-spot" data-tilt>
+    {shots.map((s, i) => {
+      const entry = glob[`/src/assets/shots/${s.src}`];
+      if (!entry) throw new Error(`ShotTabs: no screenshot named "${s.src}"`);
+      return (
+        <div role="tabpanel" id={`shot-pane-${i}`} aria-labelledby={`shot-tab-${i}`}
+             class="shot-pane overflow-hidden rounded-xl border border-line-bright bg-panel shadow-[0_28px_80px_-32px_rgb(var(--text)/0.45)]" inert={i === 0 ? undefined : true}>
+          <div aria-hidden="true" class="flex items-center gap-1.5 border-b border-line bg-panel-2 px-3 py-2">
+            <span class="h-2.5 w-2.5 rounded-full bg-bad/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-warn/80"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-ok/80"></span>
+          </div>
+          <Image src={entry.default} alt={s.alt} widths={[720, 1440, 2160]}
+                 sizes="(min-width: 1152px) 896px, (min-width: 768px) 92vw, 100vw"
+                 format="webp" quality="high" loading={i === 0 ? "eager" : "lazy"} decoding="async"
+                 fetchpriority={i === 0 ? "high" : "auto"} class="block h-auto w-full" />
+          <span aria-hidden="true" class="shot-sheen"></span>
+        </div>
+      );
+    })}
+  </div>
+</div>
