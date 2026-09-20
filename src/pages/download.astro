@@ -74,4 +74,212 @@ import WaitlistForm from "../components/WaitlistForm.astro";
     </div>
     <p class="mt-4 text-sm text-muted-aa">Speeds are ballpark figures from public MLX benchmarks on comparable hardware, not promises; your mileage varies with context length, background load, and whether the fans have anything better to do. The first-launch benchmark measures your actual Mac and labels each model honestly before you download it.</p>
   </section>
+  <section class="mt-16">
+    <h2 class="text-2xl font-semibold tracking-tight text-text-strong">Qwen&nbsp;27B at 4-bit: M1 through M6</h2>
+    <p class="mt-3 max-w-prose text-text">One model, every generation of Apple silicon. Generation speed is memory-bandwidth-bound, so the bars track the pipe, not the launch year. Prefill (reading your prompt, documents and code) is compute-bound and shown separately &mdash; it is the column old Macs lose hardest. The 4-bit Qwen&nbsp;27B weighs about 15&nbsp;GB, so the fit column tells you whether it can even move into your Mac&rsquo;s unified memory.</p>
+    <div class="mt-6 overflow-x-auto">
+      <table class="chip-table">
+        <thead>
+          <tr>
+            <th scope="col">Chip</th>
+            <th scope="col">CPU&nbsp;·&nbsp;GPU</th>
+            <th scope="col">Memory options</th>
+            <th scope="col">Bandwidth</th>
+            <th scope="col">Prefill</th>
+            <th scope="col">Generation&nbsp;·&nbsp;tok/s</th>
+            <th scope="col">27B&nbsp;fits?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="family"><th scope="col" colspan="7">M1 &mdash; 2020 &middot; 5&nbsp;nm</th></tr>
+          <tr class="no-fit">
+            <th scope="row">M1<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
+            <td>8&nbsp;·&nbsp;7&ndash;8</td>
+            <td>8&ndash;16&nbsp;GB</td>
+            <td>68&nbsp;GB/s</td>
+            <td class="prefill">~130&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:7%"></i></span><span class="num">~8 <small>tk/s</small></span></span></td>
+            <td><span class="fit no">No</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M1&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
+            <td>8&ndash;10&nbsp;·&nbsp;14&ndash;16</td>
+            <td>16&ndash;32&nbsp;GB</td>
+            <td>205&nbsp;GB/s</td>
+            <td class="prefill">~390&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:21%"></i></span><span class="num">~23 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">24&ndash;32&nbsp;GB</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M1&nbsp;Max<span class="chip-meta">MBP · iMac</span></th>
+            <td>8&ndash;10&nbsp;·&nbsp;24&ndash;32</td>
+            <td>32&ndash;64&nbsp;GB</td>
+            <td>410&nbsp;GB/s</td>
+            <td class="prefill">~780&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:41%"></i></span><span class="num">~45 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M1&nbsp;Ultra<span class="chip-meta">Studio</span></th>
+            <td>20&nbsp;·&nbsp;48&ndash;64</td>
+            <td>64&ndash;128&nbsp;GB</td>
+            <td>819&nbsp;GB/s</td>
+            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:77%"></i></span><span class="num">~85 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="family"><th scope="col" colspan="7">M2 &mdash; 2022 &middot; 5&nbsp;nm (2nd gen)</th></tr>
+          <tr class="no-fit">
+            <th scope="row">M2<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
+            <td>8&nbsp;·&nbsp;8&ndash;10</td>
+            <td>8&ndash;24&nbsp;GB</td>
+            <td>102&nbsp;GB/s</td>
+            <td class="prefill">~190&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:11%"></i></span><span class="num">~12 <small>tk/s</small></span></span></td>
+            <td><span class="fit no">24&nbsp;GB swap</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M2&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
+            <td>10&ndash;12&nbsp;·&nbsp;16&ndash;19</td>
+            <td>16&ndash;32&nbsp;GB</td>
+            <td>205&nbsp;GB/s</td>
+            <td class="prefill">~390&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:22%"></i></span><span class="num">~24 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">32&nbsp;GB</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M2&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
+            <td>12&nbsp;·&nbsp;30&ndash;38</td>
+            <td>32&ndash;96&nbsp;GB</td>
+            <td>410&nbsp;GB/s</td>
+            <td class="prefill">~780&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~46 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M2&nbsp;Ultra<span class="chip-meta">Studio · Pro&nbsp;Display&nbsp;XDR</span></th>
+            <td>24&nbsp;·&nbsp;60&ndash;76</td>
+            <td>64&ndash;192&nbsp;GB</td>
+            <td>819&nbsp;GB/s</td>
+            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:80%"></i></span><span class="num">~88 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="family"><th scope="col" colspan="7">M3 &mdash; 2023 &middot; 3&nbsp;nm · Dynamic Caching · mesh shading</th></tr>
+          <tr class="no-fit">
+            <th scope="row">M3<span class="chip-meta">Air · 14&Prime; Pro · mini</span></th>
+            <td>8&nbsp;·&nbsp;8&ndash;10</td>
+            <td>8&ndash;24&nbsp;GB</td>
+            <td>102&nbsp;GB/s</td>
+            <td class="prefill">~200&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:12%"></i></span><span class="num">~13 <small>tk/s</small></span></span></td>
+            <td><span class="fit no">24&nbsp;GB swap</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M3&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP</span></th>
+            <td>11&ndash;12&nbsp;·&nbsp;14&ndash;18</td>
+            <td>18&ndash;36&nbsp;GB</td>
+            <td>150&ndash;205&nbsp;GB/s</td>
+            <td class="prefill">~290&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:16%"></i></span><span class="num">~18 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">36&nbsp;GB</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M3&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
+            <td>14&ndash;16&nbsp;·&nbsp;30&ndash;40</td>
+            <td>36&ndash;128&nbsp;GB</td>
+            <td>307&ndash;410&nbsp;GB/s</td>
+            <td class="prefill">~640&ndash;780&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~40&ndash;52 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M3&nbsp;Ultra<span class="chip-meta">Studio</span></th>
+            <td>24&ndash;28&nbsp;·&nbsp;60&ndash;80</td>
+            <td>96&ndash;512&nbsp;GB</td>
+            <td>819&nbsp;GB/s</td>
+            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:82%"></i></span><span class="num">~90 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="family"><th scope="col" colspan="7">M4 &mdash; 2024 &middot; 3&nbsp;nm (2nd gen) · hardware ray tracing</th></tr>
+          <tr>
+            <th scope="row">M4<span class="chip-meta">Air · mini · iMac · iPad&nbsp;Pro</span></th>
+            <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
+            <td>16&ndash;32&nbsp;GB</td>
+            <td>120&nbsp;GB/s</td>
+            <td class="prefill">~230&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:14%"></i></span><span class="num">~15 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">32&nbsp;GB</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M4&nbsp;Pro<span class="chip-meta">MBP · mini</span></th>
+            <td>12&ndash;14&nbsp;·&nbsp;16&ndash;20</td>
+            <td>24&ndash;48&nbsp;GB</td>
+            <td>273&nbsp;GB/s</td>
+            <td class="prefill">~520&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:29%"></i></span><span class="num">~32 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M4&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
+            <td>14&ndash;16&nbsp;·&nbsp;32&ndash;40</td>
+            <td>36&ndash;128&nbsp;GB</td>
+            <td>410&ndash;546&nbsp;GB/s</td>
+            <td class="prefill">~800&ndash;950&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:55%"></i></span><span class="num">~55&ndash;65 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="family"><th scope="col" colspan="7">M5 &mdash; 2025 &middot; 3&nbsp;nm (3rd gen) · neural accelerators per GPU core</th></tr>
+          <tr>
+            <th scope="row">M5<span class="chip-meta">14&Prime; MBP · iPad&nbsp;Pro (Air/mini follow)</span></th>
+            <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
+            <td>16&ndash;32&nbsp;GB</td>
+            <td>153&nbsp;GB/s</td>
+            <td class="prefill">~290&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:18%"></i></span><span class="num">~20 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">32&nbsp;GB</span></td>
+          </tr>
+          <tr class="proj">
+            <th scope="row">M5&nbsp;Pro<span class="chip-meta">projected</span></th>
+            <td>12&ndash;14&nbsp;·&nbsp;20<span class="proj-tag">est</span></td>
+            <td>24&ndash;48&nbsp;GB</td>
+            <td>~273&nbsp;GB/s<span class="proj-tag">est</span></td>
+            <td class="prefill">~520&nbsp;tk/s<span class="proj-tag">est</span></td>
+            <td><span class="speed"><span class="bar"><i style="width:35%"></i></span><span class="num">~38 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr>
+            <th scope="row">M5&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
+            <td>16&ndash;18&nbsp;·&nbsp;32&ndash;40</td>
+            <td>36&ndash;128&nbsp;GB</td>
+            <td>614&nbsp;GB/s</td>
+            <td class="prefill">~1&thinsp;100&nbsp;tk/s</td>
+            <td><span class="speed"><span class="bar"><i style="width:68%"></i></span><span class="num">~75 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="proj">
+            <th scope="row">M5&nbsp;Ultra<span class="chip-meta">forecast only</span></th>
+            <td>28&ndash;32&nbsp;·&nbsp;60&ndash;80<span class="proj-tag">est</span></td>
+            <td>96&ndash;512&nbsp;GB</td>
+            <td>819&nbsp;GB/s<span class="proj-tag">est</span></td>
+            <td class="prefill">~1&thinsp;500&nbsp;tk/s<span class="proj-tag">est</span></td>
+            <td><span class="speed"><span class="bar"><i style="width:70%"></i></span><span class="num">~70&ndash;85 <small>tk/s</small></span></span></td>
+            <td><span class="fit yes">Yes</span></td>
+          </tr>
+          <tr class="family"><th scope="col" colspan="7">M6 &mdash; 2026&ndash;27 &middot; 2&nbsp;nm<span class="proj-tag">projected</span></th></tr>
+          <tr class="proj">
+            <th scope="row">M6<span class="chip-meta">projected</span></th>
+            <td>10&ndash;12&nbsp;·&nbsp;10&ndash;12<span class="proj-tag">est</span></td>
+            <td>16&ndash;32&nbsp;GB</td>
+            <td>~190&ndash;240&nbsp;GB/s<span class="proj-tag">est</span></td>
+            <td class="prefill">~350&ndash;450&nbsp;tk/s<span class="proj-tag">est</span></td>
+            <td><span class="speed"><span class="bar"><i style="width:24%"></i></span><span class="num">~24&ndash;28 <small>tk/s</small></span></span></td>
+            <td><span class="fit tight">32&nbsp;GB</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-sm text-muted-aa"><strong>Reading the table:</strong> the base model is Qwen&nbsp;27B at 4-bit MLX quantization (~15&nbsp;GB of weights + ~1.3&nbsp;GB of KV cache per 4&thinsp;K tokens of context). Generation speed is <em>bandwidth&nbsp;&divide;&nbsp;15&nbsp;GB</em> in the limit, which is why an M1&nbsp;Max outruns a new base&nbsp;M4 and why &ldquo;2023 laptop&rdquo; tells you nothing on its own. Prefill is compute-bound &mdash; the M1&rsquo;s original GPU shuffles a 32&thinsp;K-token document in about 4 minutes where an M4&nbsp;Max needs ~40&nbsp;seconds. <strong>M1 owners:</strong> at 16&nbsp;GB the 27B genuinely does not fit &mdash; and at 8&nbsp;GB nothing bigger than 7B does. KonaClaw offers you Qwen3&nbsp;8B instead, which runs respectably. <strong>M5&nbsp;Pro, M5&nbsp;Ultra and M6 are projections</strong> from public analyst forecasts and architectural trends, marked <span class="proj-tag">est</span> &mdash; we will publish measured numbers the week each machine ships, measured by KonaClaw&rsquo;s first-launch benchmark on your exact silicon.</p>
+  </section>
 </Base>

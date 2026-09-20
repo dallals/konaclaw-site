@@ -77,6 +77,114 @@
   .spec-table th, .spec-table td { padding: 0.7rem 0.75rem; }
 }
 
+/* Chip matrix (download page): one 4-bit Qwen 27B measured across every
+   Apple silicon tier. Family rows group the generations; the generation
+   column draws a proportional bar so the bandwidth story is visual. */
+.chip-table {
+  width: 100%;
+  min-width: 940px;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+.chip-table th, .chip-table td {
+  text-align: left;
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid rgb(var(--line) / 0.7);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.chip-table thead th {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-aa);
+  border-bottom: 1px solid rgb(var(--line-bright));
+}
+.chip-table td { color: var(--color-text); }
+.chip-table tbody th {
+  font-weight: 600;
+  color: var(--color-text-strong);
+  padding-left: 0;
+}
+.chip-table .chip-meta {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--color-muted-aa);
+  white-space: nowrap;
+}
+/* Generation family divider: M1 · M2 · M3 ... spanning the whole row */
+.chip-table tr.family th[scope="col"] {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-deep);
+  background: rgb(var(--accent) / 0.07);
+  border-top: 1px solid rgb(var(--line-bright));
+  border-bottom: 1px solid rgb(var(--line-bright));
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+/* Generation throughput drawn as a bar scaled against the fastest tier */
+.speed {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 150px;
+}
+.speed .bar {
+  flex: 1;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--line));
+  overflow: hidden;
+}
+.speed .bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent-deep), var(--color-accent-bright));
+}
+.speed .num {
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+.speed .num small { font-weight: 400; color: var(--color-muted-aa); }
+/* Pre-tokenizer column: compute-bound, so plain tabular figures */
+.chip-table td.prefill { color: var(--color-muted-aa); }
+/* Will the 27B even live in this Mac's unified memory */
+.fit {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.fit.yes { color: var(--color-ok); background: rgb(var(--ok) / 0.14); }
+.fit.tight { color: var(--color-warn-aa); background: rgb(var(--warn) / 0.16); }
+.fit.no { color: var(--color-bad); background: rgb(var(--bad) / 0.14); }
+.chip-table tr.no-fit th[scope="row"], .chip-table tr.no-fit td { opacity: 0.5; }
+/* Not-shipping-yet silicon: projected figures, visually flagged */
+.chip-table tr.proj td, .chip-table tr.proj th[scope="row"] { font-style: italic; }
+.chip-table .proj-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-style: normal;
+  color: var(--color-accent-deep);
+  border: 1px solid rgb(var(--accent-deep));
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+  margin-left: 0.4rem;
+}
+
 /* Full-bleed: breaks the section out of main's max-w-6xl so the aurora
    reaches the viewport edges instead of being sliced by the container. */
 .hero-bleed {
