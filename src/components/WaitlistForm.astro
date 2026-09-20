@@ -6,7 +6,7 @@ const action = `https://buttondown.com/api/emails/embed-subscribe/${user}`;
 <form action={action} method="post" class="flex max-w-md flex-col gap-3 sm:flex-row" data-testid="waitlist">
   <label for="email" class="sr-only">Email address</label>
   <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"
-         class="flex-1 rounded-lg border border-line-bright bg-bg px-4 py-3 text-text placeholder:text-muted-aa" />
+         class="flex-1 rounded-lg border border-muted-aa/70 bg-bg px-4 py-3 text-text placeholder:text-muted-aa" />
   <input type="hidden" name="embed" value="1" />
   <input type="hidden" name="tag" value="waitlist" />
   <button type="submit" class="rounded-lg bg-btn px-5 py-3 font-medium text-on-accent hover:opacity-90">Notify me</button>
