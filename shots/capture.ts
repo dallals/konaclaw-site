@@ -26,7 +26,7 @@ for (const s of shots) {
   if (s.click) await page.locator(s.click).first().click();
   await page.locator(s.ready).first().waitFor({ state: "visible", timeout: 15000 });
   await page.waitForTimeout(400);
-  await page.screenshot({ path: `public/shots/${s.id}.png`, fullPage: false });
+  await page.screenshot({ path: `src/assets/shots/${s.id}.png`, fullPage: false });
   console.log("captured", s.id, url);
 }
 await browser.close();

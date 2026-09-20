@@ -1,6 +1,10 @@
 ---
+import { Image } from "astro:assets";
 interface Props { src: string; alt: string; priority?: boolean }
 const { src, alt, priority = false } = Astro.props;
+const shots = import.meta.glob<{ default: ImageMetadata }>("/src/assets/shots/*.png", { eager: true });
+const entry = shots[`/src/assets/shots/${src}`];
+if (!entry) throw new Error(`Shot: no screenshot named "${src}" under src/assets/shots/`);
 ---
 <figure class="overflow-hidden rounded-xl border border-line-bright bg-panel shadow-[0_20px_60px_-30px_rgb(var(--text)/0.35)]">
   <div aria-hidden="true" class="flex items-center gap-1.5 border-b border-line bg-panel-2 px-3 py-2">
@@ -8,7 +12,7 @@ const { src, alt, priority = false } = Astro.props;
     <span class="h-2.5 w-2.5 rounded-full bg-warn/80"></span>
     <span class="h-2.5 w-2.5 rounded-full bg-ok/80"></span>
   </div>
-  <img src={`/shots/${src}`} alt={alt} width="1440" height="900"
-       loading={priority ? "eager" : "lazy"} decoding="async" fetchpriority={priority ? "high" : "auto"}
-       class="block h-auto w-full" />
+  <Image src={entry.default} alt={alt} widths={[720, 1440, 2160]} sizes="(min-width: 768px) 50vw, 100vw"
+         format="webp" quality="high" loading={priority ? "eager" : "lazy"} decoding="async"
+         fetchpriority={priority ? "high" : "auto"} class="block h-auto w-full" />
 </figure>
