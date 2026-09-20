@@ -1,0 +1,22 @@
+name: ci
+on: { push: { branches: [main] }, pull_request: {} }
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    env: { PUBLIC_BUTTONDOWN_USERNAME: ${{ vars.PUBLIC_BUTTONDOWN_USERNAME || 'konaclaw' }} }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .node-version, cache: npm }
+      - run: npm ci
+      - run: npx astro check
+      - run: npx vitest run
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npx astro preview --host 127.0.0.1 --port 4321
+      - run: npx playwright test
+      - if: always()
+        run: npx astro preview stop
+      - uses: lycheeverse/lychee-action@v2
+        with: { args: "--offline --root-dir ./dist ./dist", fail: true }
+      - run: npx lhci autorun
