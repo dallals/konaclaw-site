@@ -3,7 +3,7 @@ on: { push: { branches: [main] }, pull_request: {} }
 jobs:
   site:
     runs-on: ubuntu-latest
-    env: { PUBLIC_BUTTONDOWN_USERNAME: ${{ vars.PUBLIC_BUTTONDOWN_USERNAME || 'konaclaw' }} }
+    env: { PUBLIC_BUTTONDOWN_USERNAME: "${{ vars.PUBLIC_BUTTONDOWN_USERNAME || 'konaclaw' }}" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
