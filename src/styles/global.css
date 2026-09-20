@@ -43,8 +43,13 @@
 }
 
 @layer base {
-  html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
-  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); overflow-x: clip; }
+  /* Absorbs the sideways bleed of the hero aurora and the glow behind the
+     screenshot, both of which are wider than their container by design.
+     On body rather than html: overflow on the root propagates to the viewport
+     instead of clipping here. `clip` rather than `hidden` because hidden would
+     make body a scroll container and break position: sticky on the nav. */
+  body { margin: 0; -webkit-font-smoothing: antialiased; overflow-x: clip; }
   a { color: var(--color-link); text-decoration: underline; text-underline-offset: 3px; }
   :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 }
@@ -77,9 +82,11 @@
   .spec-table th, .spec-table td { padding: 0.7rem 0.75rem; }
 }
 
-/* Chip matrix (download page): one 4-bit Qwen 27B measured across every
-   Apple silicon tier. Family rows group the generations; the generation
-   column draws a proportional bar so the bandwidth story is visual. */
+/* Chip matrix (download page): one 4-bit Qwen3.8-27B across every Apple
+   silicon tier. Figures are derived, not measured — see src/lib/chips.ts,
+   which renders both this table and its context picker. Family rows group
+   the generations; generation draws a proportional bar so the bandwidth
+   story is visual. */
 .chip-table {
   width: 100%;
   min-width: 940px;
@@ -116,7 +123,7 @@
   white-space: nowrap;
 }
 /* Generation family divider: M1 · M2 · M3 ... spanning the whole row */
-.chip-table tr.family th[scope="col"] {
+.chip-table tr.family th[scope="colgroup"] {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -155,7 +162,7 @@
 .speed .num small { font-weight: 400; color: var(--color-muted-aa); }
 /* Pre-tokenizer column: compute-bound, so plain tabular figures */
 .chip-table td.prefill { color: var(--color-muted-aa); }
-/* Will the 27B even live in this Mac's unified memory */
+/* Smallest memory config that holds the model at this context */
 .fit {
   display: inline-block;
   font-size: 0.68rem;
@@ -170,23 +177,7 @@
 .fit.tight { color: var(--color-warn-aa); background: rgb(var(--warn) / 0.16); }
 .fit.no { color: var(--color-bad); background: rgb(var(--bad) / 0.14); }
 .chip-table tr.no-fit th[scope="row"], .chip-table tr.no-fit td { opacity: 0.5; }
-/* Not-shipping-yet silicon: projected figures, visually flagged */
-.chip-table tr.proj td, .chip-table tr.proj th[scope="row"] { font-style: italic; }
-.chip-table .proj-tag {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-style: normal;
-  color: var(--color-accent-deep);
-  border: 1px solid rgb(var(--accent-deep));
-  border-radius: 999px;
-  padding: 0.05rem 0.4rem;
-  margin-left: 0.4rem;
-}
 
-/* Full-bleed: breaks the section out of main's max-w-6xl so the aurora
-   reaches the viewport edges instead of being sliced by the container. */
 /* Context-window picker: recalculates prefill/generation/fit per chip */
 .ctx-picker {
   display: flex;
@@ -226,17 +217,23 @@
   color: var(--color-muted-aa);
   max-width: 46rem;
 }
-.hero-bleed {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-}
+/* The section stays inside main's gutter; only .hero-glow bleeds (below).
+   Breaking the whole section out with 100vw cost the hero its side padding
+   on phones — the headline ran flush to the screen edge — and 100vw counts
+   the classic scrollbar, adding a stray horizontal scroll wherever
+   scrollbars take up layout space. */
+.hero-bleed { position: relative; }
 
 /* Hero: soft cinnamon aurora behind the headline, warm glow cradling the shot.
-   Inset is flush (0) on the full-bleed section: the gradients fade to
-   transparent well before the edge, so overflow-x-clip leaves no seam. */
+   Centred on the viewport rather than the container so it fades out naturally
+   instead of being sliced at main's edge. html has overflow-x: clip to absorb
+   the overshoot without producing a scrollbar. */
 .hero-glow {
   position: absolute;
-  inset: 0 0 auto 0;
+  top: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
   height: 130%;
   z-index: -1;
   background:
@@ -261,7 +258,7 @@
 .shot-spot::before {
   content: "";
   position: absolute;
-  inset: 8% -6% -18% -6%;
+  inset: 8% 0 -18% 0;
   z-index: -1;
   background: radial-gradient(60% 60% at 50% 45%, rgb(var(--accent-bright) / 0.28), transparent 72%);
   filter: blur(48px);

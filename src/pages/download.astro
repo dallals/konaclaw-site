@@ -1,6 +1,24 @@
 ---
 import Base from "../layouts/Base.astro";
 import WaitlistForm from "../components/WaitlistForm.astro";
+import {
+  CHIPS, CONTEXTS, MODEL, WEIGHTS,
+  genRange, prefillRange, fitFor, maxGen,
+  range, ctxLabel, memLabel, bwLabel,
+} from "../lib/chips";
+
+const DEFAULT_CTX = 4;
+const top = maxGen(DEFAULT_CTX);
+
+// One pass over the chips, grouped by family, rendered from the same module the
+// client script re-runs on every context change. Static markup and the picker
+// cannot drift apart because neither one hand-writes a number.
+const families: { title: string; chips: typeof CHIPS }[] = [];
+for (const c of CHIPS) {
+  const last = families[families.length - 1];
+  if (last && last.title === c.family) last.chips.push(c);
+  else families.push({ title: c.family, chips: [c] });
+}
 ---
 <Base title="Download" description="KonaClaw for macOS on Apple silicon. Free trial at launch, then a paid license. Leave an email to be told when it ships.">
   <section class="pt-16">
@@ -8,6 +26,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
     <p class="mt-4 max-w-prose text-lg text-text">The first release is being signed and notarized now. Leave an email and you will get exactly one message the day it is live.</p>
     <div class="mt-8"><WaitlistForm /></div>
   </section>
+
   <section class="prose-kc mt-16 grid gap-10 md:grid-cols-2">
     <div>
       <h2>How it will work</h2>
@@ -19,15 +38,16 @@ import WaitlistForm from "../components/WaitlistForm.astro";
       <ul>
         <li>A Mac with Apple silicon (M1 or later).</li>
         <li>macOS 14 (Sonoma) or later.</li>
-        <li>16 GB of memory or more. Larger models want 32 GB or more.</li>
+        <li>16 GB of memory or more. The larger models want 32 GB or more.</li>
         <li>About 10 GB of disk for the app and a first model.</li>
       </ul>
-      <p>The rule of thumb: a 4-bit model needs roughly 0.7&nbsp;GB per billion parameters, plus room for macOS and your apps. KonaClaw checks your Mac at first launch and never downloads a model that doesn't fit comfortably.</p>
+      <p>The rule of thumb: a 4-bit model needs roughly 0.6&nbsp;GB per billion parameters, plus room for macOS and your apps. KonaClaw checks your Mac at first launch and never downloads a model that doesn't fit comfortably.</p>
     </div>
   </section>
+
   <section class="mt-16">
     <h2 class="text-2xl font-semibold tracking-tight text-text-strong">A model sized to your Mac</h2>
-    <p class="mt-3 max-w-prose text-text">Setup picks the sweet-spot model for your machine automatically, and you can switch any time in Settings. Here is what each tier runs, with approximate generation speeds for 4-bit MLX builds in a chat workload (long contexts and thermal throttling pull these down a little).</p>
+    <p class="mt-3 max-w-prose text-text">Setup picks the sweet-spot model for your machine automatically, and you can switch any time in Settings. Speeds below are derived from each chip's memory bandwidth, not measured on every machine &mdash; see the note under the next table for the method.</p>
     <div class="mt-6 overflow-x-auto">
       <table class="spec-table">
         <thead>
@@ -42,53 +62,55 @@ import WaitlistForm from "../components/WaitlistForm.astro";
           <tr>
             <th scope="row" class="whitespace-nowrap">M1 · 16 GB<br class="hidden sm:block"><span class="text-muted-aa text-sm font-normal">(Air, mini, MBP)</span></th>
             <td>Qwen3&nbsp;8B · Llama&nbsp;3.1&nbsp;8B</td>
-            <td class="whitespace-nowrap">~15–20 tok/s</td>
+            <td class="whitespace-nowrap">~10–12 tok/s</td>
             <td>Comfortable chat, drafts and mail triage. Stick to 8B and close the 40-tab browser window.</td>
           </tr>
           <tr>
             <th scope="row" class="whitespace-nowrap">M1 Pro / Max · M2 · M3<br><span class="text-muted-aa text-sm font-normal">16–32 GB</span></th>
             <td>Qwen3&nbsp;14B · gpt-oss-20b<br><span class="text-muted-aa text-sm">24B if you have 32&nbsp;GB</span></td>
-            <td class="whitespace-nowrap">~25–45 tok/s</td>
+            <td class="whitespace-nowrap">~10–35 tok/s</td>
             <td>The capable middle of the road. 32&nbsp;GB unlocks Mistral&nbsp;Small&nbsp;24B and its much better tool use.</td>
           </tr>
           <tr>
             <th scope="row" class="whitespace-nowrap">M4 · M5<br><span class="text-muted-aa text-sm font-normal">24–32 GB</span></th>
-            <td>Mistral&nbsp;Small&nbsp;24B · Qwen3-30B-A3B</td>
-            <td class="whitespace-nowrap">~60–90 tok/s</td>
-            <td>Fast. The sparse MoE models (only ~3B active parameters) answer faster than you read.</td>
+            <td>Mistral&nbsp;Small&nbsp;24B<br><span class="text-muted-aa text-sm">or Qwen3-30B-A3B</span></td>
+            <td class="whitespace-nowrap">~7–9 tok/s dense<br><span class="text-muted-aa text-sm">~50–64 at 30B-A3B</span></td>
+            <td>The sparse MoE only activates ~3B parameters per token, so it answers several times faster than the dense 24B beside it.</td>
           </tr>
           <tr>
-            <th scope="row" class="whitespace-nowrap">M4 Pro / Max · M5 Pro / Max<br><span class="text-muted-aa text-sm font-normal">48–64 GB</span></th>
-            <td>Qwen3&nbsp;32B · gpt-oss-120b<br><span class="text-muted-aa text-sm">120B needs 64&nbsp;GB</span></td>
-            <td class="whitespace-nowrap">~35–55 tok/s at 120B</td>
+            <th scope="row" class="whitespace-nowrap">M4 Pro / Max · M5 Pro / Max<br><span class="text-muted-aa text-sm font-normal">48–128 GB</span></th>
+            <td>Qwen3&nbsp;32B · gpt-oss-120b<br><span class="text-muted-aa text-sm">120B wants 96&nbsp;GB+</span></td>
+            <td class="whitespace-nowrap">~12–27 tok/s at 32B</td>
             <td>Frontier-class quality, still local. gpt-oss-120b is the best model that fits a desk Mac today.</td>
           </tr>
           <tr>
             <th scope="row" class="whitespace-nowrap">Studio / Ultra · M3 Ultra and later<br><span class="text-muted-aa text-sm font-normal">96–512 GB</span></th>
             <td>Llama&nbsp;3.3&nbsp;70B · gpt-oss-120b · bigger still</td>
-            <td class="whitespace-nowrap">~30–50 tok/s at 70B+</td>
+            <td class="whitespace-nowrap">~16–24 tok/s at 70B</td>
             <td>Server-class models on your desk, quietly. Everything the catalog offers, at full size.</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="mt-4 text-sm text-muted-aa">Speeds are ballpark figures from public MLX benchmarks on comparable hardware, not promises; your mileage varies with context length, background load, and whether the fans have anything better to do. The first-launch benchmark measures your actual Mac and labels each model honestly before you download it.</p>
   </section>
+
   <section class="mt-16">
-    <h2 class="text-2xl font-semibold tracking-tight text-text-strong">Qwen&nbsp;27B at 4-bit: M1 through M6</h2>
-    <p class="mt-3 max-w-prose text-text">One model, every generation of Apple silicon. Generation speed is memory-bandwidth-bound, so the bars track the pipe, not the launch year. Prefill (reading your prompt, documents and code) is compute-bound and shown separately &mdash; it is the column old Macs lose hardest. The 4-bit Qwen&nbsp;27B weighs about 15&nbsp;GB, so the fit column tells you whether it can even move into your Mac&rsquo;s unified memory. Pick a context window below: longer contexts grow the KV cache on top of those 15&nbsp;GB, which slows generation (more bytes read per token), slows prefill (attention is quadratic in context), and raises the memory a 27B needs to fit.</p>
+    <h2 class="text-2xl font-semibold tracking-tight text-text-strong">{MODEL} at 4-bit: M1 through M6</h2>
+    <p class="mt-3 max-w-prose text-text">One model, every generation of Apple silicon. Generation speed is memory-bandwidth-bound, so the bars track the pipe, not the launch year &mdash; which is why an M1&nbsp;Max still outruns a new base&nbsp;M4. Prefill (reading your prompt, documents and code) is compute-bound and shown separately; it is the column old Macs lose hardest. Pick a context window below: the cache grows on top of the ~{WEIGHTS}&nbsp;GB of weights, which slows generation and raises the memory the model needs to fit.</p>
+
     <div class="mt-6 ctx-picker" role="group" aria-label="Context size">
       <span class="ctx-label">Context window</span>
       <div class="ctx-options">
-        <button type="button" class="ctx-btn is-active" data-ctx="4" aria-pressed="true">4&nbsp;K</button>
-        <button type="button" class="ctx-btn" data-ctx="8" aria-pressed="false">8&nbsp;K</button>
-        <button type="button" class="ctx-btn" data-ctx="32" aria-pressed="false">32&nbsp;K</button>
-        <button type="button" class="ctx-btn" data-ctx="128" aria-pressed="false">128&nbsp;K</button>
-        <button type="button" class="ctx-btn" data-ctx="256" aria-pressed="false">256&nbsp;K</button>
-        <button type="button" class="ctx-btn" data-ctx="1024" aria-pressed="false">1&nbsp;M</button>
+        {CONTEXTS.map((k) => (
+          <button type="button" class:list={["ctx-btn", { "is-active": k === DEFAULT_CTX }]}
+                  data-ctx={String(k)} aria-pressed={k === DEFAULT_CTX ? "true" : "false"}>
+            {ctxLabel(k).replace(" ", " ")}
+          </button>
+        ))}
       </div>
     </div>
     <p class="ctx-note" hidden></p>
+
     <div class="mt-4 overflow-x-auto">
       <table class="chip-table">
         <thead>
@@ -97,288 +119,98 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <th scope="col">CPU&nbsp;·&nbsp;GPU</th>
             <th scope="col">Memory options</th>
             <th scope="col">Bandwidth</th>
-            <th scope="col">Prefill&nbsp;@&nbsp;<span class="ctx-head" data-for="prefill">4&nbsp;K</span></th>
-            <th scope="col">Generation&nbsp;·&nbsp;tok/s&nbsp;@&nbsp;<span class="ctx-head" data-for="gen">4&nbsp;K</span></th>
-            <th scope="col">27B&nbsp;fits&nbsp;@&nbsp;<span class="ctx-head" data-for="fit">4&nbsp;K</span>?</th>
+            <th scope="col">Prefill&nbsp;@&nbsp;<span class="ctx-head">{ctxLabel(DEFAULT_CTX)}</span></th>
+            <th scope="col">Generation&nbsp;·&nbsp;tok/s&nbsp;@&nbsp;<span class="ctx-head">{ctxLabel(DEFAULT_CTX)}</span></th>
+            <th scope="col">Fits&nbsp;@&nbsp;<span class="ctx-head">{ctxLabel(DEFAULT_CTX)}</span>?</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="family"><th scope="col" colspan="7">M1 &mdash; 2020 &middot; 5&nbsp;nm</th></tr>
-          <tr class="no-fit" data-gen="8" data-prefill="130" data-mem="16">
-            <th scope="row">M1<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
-            <td>8&nbsp;·&nbsp;7&ndash;8</td>
-            <td>8&ndash;16&nbsp;GB</td>
-            <td>68&nbsp;GB/s</td>
-            <td class="prefill">~130&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:7%"></i></span><span class="num">~8 <small>tk/s</small></span></span></td>
-            <td><span class="fit no">No</span></td>
-          </tr>
-          <tr data-gen="23" data-prefill="390" data-mem="32">
-            <th scope="row">M1&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
-            <td>8&ndash;10&nbsp;·&nbsp;14&ndash;16</td>
-            <td>16&ndash;32&nbsp;GB</td>
-            <td>205&nbsp;GB/s</td>
-            <td class="prefill">~390&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:21%"></i></span><span class="num">~23 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">24&ndash;32&nbsp;GB</span></td>
-          </tr>
-          <tr data-gen="45" data-prefill="780" data-mem="64">
-            <th scope="row">M1&nbsp;Max<span class="chip-meta">MBP · iMac</span></th>
-            <td>8&ndash;10&nbsp;·&nbsp;24&ndash;32</td>
-            <td>32&ndash;64&nbsp;GB</td>
-            <td>410&nbsp;GB/s</td>
-            <td class="prefill">~780&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:41%"></i></span><span class="num">~45 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr data-gen="85" data-prefill="1500" data-mem="128">
-            <th scope="row">M1&nbsp;Ultra<span class="chip-meta">Studio</span></th>
-            <td>20&nbsp;·&nbsp;48&ndash;64</td>
-            <td>64&ndash;128&nbsp;GB</td>
-            <td>819&nbsp;GB/s</td>
-            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:77%"></i></span><span class="num">~85 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="family"><th scope="col" colspan="7">M2 &mdash; 2022 &middot; 5&nbsp;nm (2nd gen)</th></tr>
-          <tr class="no-fit" data-gen="12" data-prefill="190" data-mem="24">
-            <th scope="row">M2<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
-            <td>8&nbsp;·&nbsp;8&ndash;10</td>
-            <td>8&ndash;24&nbsp;GB</td>
-            <td>102&nbsp;GB/s</td>
-            <td class="prefill">~190&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:11%"></i></span><span class="num">~12 <small>tk/s</small></span></span></td>
-            <td><span class="fit no">24&nbsp;GB swap</span></td>
-          </tr>
-          <tr data-gen="24" data-prefill="390" data-mem="32">
-            <th scope="row">M2&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
-            <td>10&ndash;12&nbsp;·&nbsp;16&ndash;19</td>
-            <td>16&ndash;32&nbsp;GB</td>
-            <td>205&nbsp;GB/s</td>
-            <td class="prefill">~390&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:22%"></i></span><span class="num">~24 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">32&nbsp;GB</span></td>
-          </tr>
-          <tr data-gen="46" data-prefill="780" data-mem="96">
-            <th scope="row">M2&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
-            <td>12&nbsp;·&nbsp;30&ndash;38</td>
-            <td>32&ndash;96&nbsp;GB</td>
-            <td>410&nbsp;GB/s</td>
-            <td class="prefill">~780&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~46 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr data-gen="88" data-prefill="1500" data-mem="192">
-            <th scope="row">M2&nbsp;Ultra<span class="chip-meta">Studio · Pro&nbsp;Display&nbsp;XDR</span></th>
-            <td>24&nbsp;·&nbsp;60&ndash;76</td>
-            <td>64&ndash;192&nbsp;GB</td>
-            <td>819&nbsp;GB/s</td>
-            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:80%"></i></span><span class="num">~88 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="family"><th scope="col" colspan="7">M3 &mdash; 2023 &middot; 3&nbsp;nm · Dynamic Caching · mesh shading</th></tr>
-          <tr class="no-fit" data-gen="13" data-prefill="200" data-mem="24">
-            <th scope="row">M3<span class="chip-meta">Air · 14&Prime; Pro · mini</span></th>
-            <td>8&nbsp;·&nbsp;8&ndash;10</td>
-            <td>8&ndash;24&nbsp;GB</td>
-            <td>102&nbsp;GB/s</td>
-            <td class="prefill">~200&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:12%"></i></span><span class="num">~13 <small>tk/s</small></span></span></td>
-            <td><span class="fit no">24&nbsp;GB swap</span></td>
-          </tr>
-          <tr data-gen="18" data-prefill="290" data-mem="36">
-            <th scope="row">M3&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP</span></th>
-            <td>11&ndash;12&nbsp;·&nbsp;14&ndash;18</td>
-            <td>18&ndash;36&nbsp;GB</td>
-            <td>150&ndash;205&nbsp;GB/s</td>
-            <td class="prefill">~290&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:16%"></i></span><span class="num">~18 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">36&nbsp;GB</span></td>
-          </tr>
-          <tr data-gen="40-52" data-prefill="640-780" data-mem="128">
-            <th scope="row">M3&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
-            <td>14&ndash;16&nbsp;·&nbsp;30&ndash;40</td>
-            <td>36&ndash;128&nbsp;GB</td>
-            <td>307&ndash;410&nbsp;GB/s</td>
-            <td class="prefill">~640&ndash;780&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~40&ndash;52 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr data-gen="90" data-prefill="1500" data-mem="512">
-            <th scope="row">M3&nbsp;Ultra<span class="chip-meta">Studio</span></th>
-            <td>24&ndash;28&nbsp;·&nbsp;60&ndash;80</td>
-            <td>96&ndash;512&nbsp;GB</td>
-            <td>819&nbsp;GB/s</td>
-            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:82%"></i></span><span class="num">~90 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="family"><th scope="col" colspan="7">M4 &mdash; 2024 &middot; 3&nbsp;nm (2nd gen) · hardware ray tracing</th></tr>
-          <tr data-gen="15" data-prefill="230" data-mem="32">
-            <th scope="row">M4<span class="chip-meta">Air · mini · iMac · iPad&nbsp;Pro</span></th>
-            <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
-            <td>16&ndash;32&nbsp;GB</td>
-            <td>120&nbsp;GB/s</td>
-            <td class="prefill">~230&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:14%"></i></span><span class="num">~15 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">32&nbsp;GB</span></td>
-          </tr>
-          <tr data-gen="32" data-prefill="520" data-mem="48">
-            <th scope="row">M4&nbsp;Pro<span class="chip-meta">MBP · mini</span></th>
-            <td>12&ndash;14&nbsp;·&nbsp;16&ndash;20</td>
-            <td>24&ndash;48&nbsp;GB</td>
-            <td>273&nbsp;GB/s</td>
-            <td class="prefill">~520&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:29%"></i></span><span class="num">~32 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr data-gen="55-65" data-prefill="800-950" data-mem="128">
-            <th scope="row">M4&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
-            <td>14&ndash;16&nbsp;·&nbsp;32&ndash;40</td>
-            <td>36&ndash;128&nbsp;GB</td>
-            <td>410&ndash;546&nbsp;GB/s</td>
-            <td class="prefill">~800&ndash;950&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:55%"></i></span><span class="num">~55&ndash;65 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="family"><th scope="col" colspan="7">M5 &mdash; 2025 &middot; 3&nbsp;nm (3rd gen) · neural accelerators per GPU core</th></tr>
-          <tr data-gen="20" data-prefill="290" data-mem="32">
-            <th scope="row">M5<span class="chip-meta">14&Prime; MBP · iPad&nbsp;Pro (Air/mini follow)</span></th>
-            <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
-            <td>16&ndash;32&nbsp;GB</td>
-            <td>153&nbsp;GB/s</td>
-            <td class="prefill">~290&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:18%"></i></span><span class="num">~20 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">32&nbsp;GB</span></td>
-          </tr>
-          <tr class="proj" data-gen="38" data-prefill="520" data-mem="48">
-            <th scope="row">M5&nbsp;Pro<span class="chip-meta">projected</span></th>
-            <td>12&ndash;14&nbsp;·&nbsp;20<span class="proj-tag">est</span></td>
-            <td>24&ndash;48&nbsp;GB</td>
-            <td>~273&nbsp;GB/s<span class="proj-tag">est</span></td>
-            <td class="prefill">~520&nbsp;tk/s<span class="proj-tag">est</span></td>
-            <td><span class="speed"><span class="bar"><i style="width:35%"></i></span><span class="num">~38 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr data-gen="75" data-prefill="1500" data-mem="128">
-            <th scope="row">M5&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
-            <td>16&ndash;18&nbsp;·&nbsp;32&ndash;40</td>
-            <td>36&ndash;128&nbsp;GB</td>
-            <td>614&nbsp;GB/s</td>
-            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
-            <td><span class="speed"><span class="bar"><i style="width:68%"></i></span><span class="num">~75 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="proj" data-gen="100-125" data-prefill="3000-3200" data-mem="512">
-            <th scope="row">M5&nbsp;Ultra<span class="chip-meta">forecast only</span></th>
-            <td>28&ndash;32&nbsp;·&nbsp;60&ndash;80<span class="proj-tag">est</span></td>
-            <td>96&ndash;512&nbsp;GB</td>
-            <td>~1&thinsp;200&nbsp;GB/s<span class="proj-tag">est</span></td>
-            <td class="prefill">~3&thinsp;000&ndash;3&thinsp;200&nbsp;tk/s<span class="proj-tag">est</span></td>
-            <td><span class="speed"><span class="bar"><i style="width:100%"></i></span><span class="num">~100&ndash;125 <small>tk/s</small></span></span></td>
-            <td><span class="fit yes">Yes</span></td>
-          </tr>
-          <tr class="family"><th scope="col" colspan="7">M6 &mdash; 2026&ndash;27 &middot; 2&nbsp;nm<span class="proj-tag">projected</span></th></tr>
-          <tr class="proj" data-gen="24-28" data-prefill="350-450" data-mem="32">
-            <th scope="row">M6<span class="chip-meta">projected</span></th>
-            <td>10&ndash;12&nbsp;·&nbsp;10&ndash;12<span class="proj-tag">est</span></td>
-            <td>16&ndash;32&nbsp;GB</td>
-            <td>~190&ndash;240&nbsp;GB/s<span class="proj-tag">est</span></td>
-            <td class="prefill">~350&ndash;450&nbsp;tk/s<span class="proj-tag">est</span></td>
-            <td><span class="speed"><span class="bar"><i style="width:24%"></i></span><span class="num">~24&ndash;28 <small>tk/s</small></span></span></td>
-            <td><span class="fit tight">32&nbsp;GB</span></td>
-          </tr>
+          {families.map((f) => (
+            <>
+              <tr class="family"><th scope="colgroup" colspan="7">{f.title}</th></tr>
+              {f.chips.map((c) => {
+                const gen = genRange(c, DEFAULT_CTX);
+                const fit = fitFor(c, DEFAULT_CTX);
+                return (
+                  <tr class:list={[{ "no-fit": fit.level === "no" }]} data-chip={c.name}>
+                    <th scope="row">{c.name}<span class="chip-meta">{c.where}</span></th>
+                    <td>{c.cpu}&nbsp;·&nbsp;{c.gpu}</td>
+                    <td>{memLabel(c.mem)}</td>
+                    <td>{bwLabel(c.bw)}</td>
+                    <td class="prefill">{range(prefillRange(c, DEFAULT_CTX))}&nbsp;tk/s</td>
+                    <td>
+                      <span class="speed">
+                        <span class="bar"><i style={`width:${Math.max(2, Math.round((gen[1] / top) * 100))}%`}></i></span>
+                        <span class="num">{range(gen)} <small>tk/s</small></span>
+                      </span>
+                    </td>
+                    <td><span class:list={["fit", fit.level]}>{fit.label}</span></td>
+                  </tr>
+                );
+              })}
+            </>
+          ))}
         </tbody>
       </table>
     </div>
-    <p class="mt-4 text-sm text-muted-aa"><strong>Reading the table:</strong> the base model is Qwen&nbsp;27B at 4-bit MLX quantization (~15&nbsp;GB of weights + ~1.3&nbsp;GB of KV cache per 4&thinsp;K tokens of context). Generation speed is <em>bandwidth&nbsp;&divide;&nbsp;15&nbsp;GB</em> in the limit, which is why an M1&nbsp;Max outruns a new base&nbsp;M4 and why &ldquo;2023 laptop&rdquo; tells you nothing on its own. Prefill is compute-bound &mdash; the M1&rsquo;s original GPU shuffles a 32&thinsp;K-token document in about 4 minutes where an M4&nbsp;Max needs ~40&nbsp;seconds. <strong>M1 owners:</strong> at 16&nbsp;GB the 27B genuinely does not fit &mdash; and at 8&nbsp;GB nothing bigger than 7B does. KonaClaw offers you Qwen3&nbsp;8B instead, which runs respectably. <strong>M5&nbsp;Pro, M5&nbsp;Ultra and M6 are projections</strong> from public analyst forecasts and architectural trends, marked <span class="proj-tag">est</span> &mdash; we will publish measured numbers the week each machine ships, measured by KonaClaw&rsquo;s first-launch benchmark on your exact silicon.</p>
+
+    <p class="mt-4 text-sm text-muted-aa"><strong>Where these numbers come from.</strong> Core counts, memory options and bandwidth are Apple's published specifications. Everything else is <em>derived, not measured</em>. {MODEL} is a hybrid: only 16 of its 64 layers carry a growing KV cache (the other 48 are Gated&nbsp;DeltaNet, which keeps a fixed-size state), so it costs ~64&nbsp;KB per token &mdash; about a quarter of a conventional model this size, and the reason long context is affordable here at all. Generation is <em>bandwidth&nbsp;&times;&nbsp;0.8&nbsp;&divide;&nbsp;(weights&nbsp;+&nbsp;cache)</em>; the 0.8 is what MLX reaches against peak, anchored on the one public measurement we could find &mdash; a 32&nbsp;GB M4 Mac&nbsp;mini at 5&ndash;6&nbsp;tok/s. Prefill assumes 2&nbsp;&times;&nbsp;27e9 FLOPs per token at ~45% GPU utilisation and is the least certain column on this page: no public benchmark of this model on Apple silicon exists yet, and the M5/M6 neural accelerators make the estimate shakier still. <strong>M1 and M2 owners:</strong> a 27B does not fit in 16&nbsp;GB, and at 8&nbsp;GB nothing past 7B does &mdash; KonaClaw offers you Qwen3&nbsp;8B instead, which runs well. We publish measured numbers the week we have them, from KonaClaw's first-launch benchmark on your exact silicon.</p>
   </section>
 </Base>
 
 <script>
-  // Qwen27B-4bit: ~15 GB weights, ~1.3 GB KV cache per 4K tokens (GQA).
-  // Generation tok/s = bandwidth-bound: 15 / (15 + KV). KV grows linearly.
-  // Prefill tok/s = compute-bound, but attention cost per token grows
-  // linearly with position, so effective throughput ~ base / (1 + 0.007·ctxK).
-  const WEIGHTS = 15, KV_PER_4K = 1.3, OVERHEAD = 2, ATT_K = 0.007;
+  import {
+    CHIPS, MODEL, WEIGHTS, NATIVE_CONTEXT_K,
+    genRange, prefillRange, fitFor, maxGen, kvGB, needGB,
+    genTokS, range, fmt, ctxLabel,
+  } from "../lib/chips";
 
-  const fmt = (n: number): string => {
-    if (n >= 1000) return Math.round(n).toLocaleString("en-US");
-    if (n >= 10) return String(Math.round(n));
-    return (Math.round(n * 10) / 10).toFixed(1);
-  };
-
-  const rows = [...document.querySelectorAll<HTMLTableRowElement>(
-    "table.chip-table tbody tr[data-gen]")];
+  const byName = new Map(CHIPS.map((c) => [c.name, c]));
+  const rows = [...document.querySelectorAll<HTMLTableRowElement>("table.chip-table tbody tr[data-chip]")];
 
   function apply(ctxK: number) {
-    const kv = KV_PER_4K * (ctxK / 4);
-    const need = WEIGHTS + kv + OVERHEAD;
-    // Normalized at 4K so the default view matches the static table exactly.
-    const genF = (WEIGHTS / (WEIGHTS + kv)) / (WEIGHTS / (WEIGHTS + KV_PER_4K));
-    const preF = (1 / (1 + ATT_K * ctxK)) / (1 / (1 + ATT_K * 4));
-    let maxGen = 0;
-    for (const tr of rows) maxGen = Math.max(maxGen, hi(parse(tr.dataset.gen!)) * genF);
+    const top = maxGen(ctxK);
 
     for (const tr of rows) {
-      const [gLo, gHi] = parse(tr.dataset.gen!).map(v => v * genF);
-      const [pLo, pHi] = parse(tr.dataset.prefill!).map(v => v * preF);
-      const mem = Number(tr.dataset.mem!);
+      const c = byName.get(tr.dataset.chip!);
+      if (!c) continue;
 
+      const gen = genRange(c, ctxK);
       const bar = tr.querySelector<HTMLElement>(".speed .bar i");
       const num = tr.querySelector<HTMLElement>(".speed .num");
-      if (bar && num) {
-        bar.style.width = Math.max(2, Math.round((gHi / maxGen) * 100)) + "%";
-        num.innerHTML = range(gLo, gHi) + " <small>tk/s</small>";
-      }
-      const pf = tr.querySelector<HTMLElement>(".prefill");
-      if (pf && pf.firstChild && pf.firstChild.nodeType === Node.TEXT_NODE) {
-        pf.firstChild.textContent = "~" + range(pLo, pHi) + "\u00a0tk/s";
-      }
+      if (bar) bar.style.width = Math.max(2, Math.round((gen[1] / top) * 100)) + "%";
+      if (num) num.innerHTML = range(gen) + " <small>tk/s</small>";
 
-      const fit = tr.querySelector<HTMLElement>(".fit");
-      if (fit) {
-        if (need <= mem) {
-          fit.className = "fit yes";
-          fit.textContent = "Yes";
-          tr.classList.remove("no-fit");
-        } else if (need <= mem * 1.15) {
-          fit.className = "fit tight";
-          fit.textContent = mem + "\u00a0GB swap";
-          tr.classList.remove("no-fit");
-        } else {
-          fit.className = "fit no";
-          fit.textContent = "No \u00b7 needs " + fmt(need) + "\u00a0GB";
-          tr.classList.add("no-fit");
-        }
+      const pf = tr.querySelector<HTMLElement>(".prefill");
+      if (pf) pf.textContent = range(prefillRange(c, ctxK)) + " tk/s";
+
+      const fit = fitFor(c, ctxK);
+      const el = tr.querySelector<HTMLElement>(".fit");
+      if (el) {
+        el.className = "fit " + fit.level;
+        el.textContent = fit.label;
       }
+      tr.classList.toggle("no-fit", fit.level === "no");
     }
 
     for (const s of document.querySelectorAll<HTMLElement>(".ctx-head")) {
       s.textContent = ctxLabel(ctxK);
     }
+
     const note = document.querySelector<HTMLElement>(".ctx-note");
     if (note) {
-      const kvTxt = kv >= 1 ? fmt(kv) + "\u00a0GB" : Math.round(kv * 1000) + "\u00a0MB";
-      note.textContent = "At " + ctxLabel(ctxK) + " the KV cache adds " + kvTxt
-        + " on top of the ~15\u00a0GB of weights \u2014 total ~" + fmt(need)
-        + "\u00a0GB. Generation slows by ~" + Math.round((1 - genF) * 100)
-        + "% and prefill by ~" + Math.round((1 - preF) * 100)
-        + "% versus a 4\u00a0K chat.";
+      const kv = kvGB(ctxK);
+      const slower = Math.round((1 - genTokS(100, ctxK) / genTokS(100, 4)) * 100);
+      const beyond = ctxK > NATIVE_CONTEXT_K
+        ? ` That is past ${MODEL}'s native ${NATIVE_CONTEXT_K} K window, so it needs RoPE scaling and quality drifts.`
+        : "";
+      note.textContent =
+        `At ${ctxLabel(ctxK)} the cache adds ${fmt(kv)} GB on top of the ~${WEIGHTS} GB of weights `
+        + `— about ${fmt(needGB(ctxK))} GB in use. Generation runs ~${slower}% slower than a 4 K chat.`
+        + beyond;
       note.hidden = ctxK === 4;
     }
   }
-
-  function parse(v: string): [number, number] {
-    const p = v.split("-").map(Number);
-    return [p[0], p.length > 1 ? p[1] : p[0]];
-  }
-  const hi = (p: [number, number]) => p[1];
-  const range = (lo: number, gHi: number) =>
-    lo === gHi ? "~" + fmt(lo) : "~" + fmt(lo) + "\u2013" + fmt(gHi);
-  const ctxLabel = (k: number) =>
-    k >= 1000 ? (k / 1000) + "\u00a0M" : k + "\u00a0K";
 
   for (const btn of document.querySelectorAll<HTMLButtonElement>(".ctx-btn")) {
     btn.addEventListener("click", () => {
