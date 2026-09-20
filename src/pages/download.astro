@@ -76,8 +76,20 @@ import WaitlistForm from "../components/WaitlistForm.astro";
   </section>
   <section class="mt-16">
     <h2 class="text-2xl font-semibold tracking-tight text-text-strong">Qwen&nbsp;27B at 4-bit: M1 through M6</h2>
-    <p class="mt-3 max-w-prose text-text">One model, every generation of Apple silicon. Generation speed is memory-bandwidth-bound, so the bars track the pipe, not the launch year. Prefill (reading your prompt, documents and code) is compute-bound and shown separately &mdash; it is the column old Macs lose hardest. The 4-bit Qwen&nbsp;27B weighs about 15&nbsp;GB, so the fit column tells you whether it can even move into your Mac&rsquo;s unified memory.</p>
-    <div class="mt-6 overflow-x-auto">
+    <p class="mt-3 max-w-prose text-text">One model, every generation of Apple silicon. Generation speed is memory-bandwidth-bound, so the bars track the pipe, not the launch year. Prefill (reading your prompt, documents and code) is compute-bound and shown separately &mdash; it is the column old Macs lose hardest. The 4-bit Qwen&nbsp;27B weighs about 15&nbsp;GB, so the fit column tells you whether it can even move into your Mac&rsquo;s unified memory. Pick a context window below: longer contexts grow the KV cache on top of those 15&nbsp;GB, which slows generation (more bytes read per token), slows prefill (attention is quadratic in context), and raises the memory a 27B needs to fit.</p>
+    <div class="mt-6 ctx-picker" role="group" aria-label="Context size">
+      <span class="ctx-label">Context window</span>
+      <div class="ctx-options">
+        <button type="button" class="ctx-btn is-active" data-ctx="4" aria-pressed="true">4&nbsp;K</button>
+        <button type="button" class="ctx-btn" data-ctx="8" aria-pressed="false">8&nbsp;K</button>
+        <button type="button" class="ctx-btn" data-ctx="32" aria-pressed="false">32&nbsp;K</button>
+        <button type="button" class="ctx-btn" data-ctx="128" aria-pressed="false">128&nbsp;K</button>
+        <button type="button" class="ctx-btn" data-ctx="256" aria-pressed="false">256&nbsp;K</button>
+        <button type="button" class="ctx-btn" data-ctx="1024" aria-pressed="false">1&nbsp;M</button>
+      </div>
+    </div>
+    <p class="ctx-note" hidden></p>
+    <div class="mt-4 overflow-x-auto">
       <table class="chip-table">
         <thead>
           <tr>
@@ -85,14 +97,14 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <th scope="col">CPU&nbsp;·&nbsp;GPU</th>
             <th scope="col">Memory options</th>
             <th scope="col">Bandwidth</th>
-            <th scope="col">Prefill</th>
-            <th scope="col">Generation&nbsp;·&nbsp;tok/s</th>
-            <th scope="col">27B&nbsp;fits?</th>
+            <th scope="col">Prefill&nbsp;@&nbsp;<span class="ctx-head" data-for="prefill">4&nbsp;K</span></th>
+            <th scope="col">Generation&nbsp;·&nbsp;tok/s&nbsp;@&nbsp;<span class="ctx-head" data-for="gen">4&nbsp;K</span></th>
+            <th scope="col">27B&nbsp;fits&nbsp;@&nbsp;<span class="ctx-head" data-for="fit">4&nbsp;K</span>?</th>
           </tr>
         </thead>
         <tbody>
           <tr class="family"><th scope="col" colspan="7">M1 &mdash; 2020 &middot; 5&nbsp;nm</th></tr>
-          <tr class="no-fit">
+          <tr class="no-fit" data-gen="8" data-prefill="130" data-mem="16">
             <th scope="row">M1<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
             <td>8&nbsp;·&nbsp;7&ndash;8</td>
             <td>8&ndash;16&nbsp;GB</td>
@@ -101,7 +113,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:7%"></i></span><span class="num">~8 <small>tk/s</small></span></span></td>
             <td><span class="fit no">No</span></td>
           </tr>
-          <tr>
+          <tr data-gen="23" data-prefill="390" data-mem="32">
             <th scope="row">M1&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
             <td>8&ndash;10&nbsp;·&nbsp;14&ndash;16</td>
             <td>16&ndash;32&nbsp;GB</td>
@@ -110,7 +122,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:21%"></i></span><span class="num">~23 <small>tk/s</small></span></span></td>
             <td><span class="fit tight">24&ndash;32&nbsp;GB</span></td>
           </tr>
-          <tr>
+          <tr data-gen="45" data-prefill="780" data-mem="64">
             <th scope="row">M1&nbsp;Max<span class="chip-meta">MBP · iMac</span></th>
             <td>8&ndash;10&nbsp;·&nbsp;24&ndash;32</td>
             <td>32&ndash;64&nbsp;GB</td>
@@ -119,7 +131,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:41%"></i></span><span class="num">~45 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr>
+          <tr data-gen="85" data-prefill="1500" data-mem="128">
             <th scope="row">M1&nbsp;Ultra<span class="chip-meta">Studio</span></th>
             <td>20&nbsp;·&nbsp;48&ndash;64</td>
             <td>64&ndash;128&nbsp;GB</td>
@@ -129,7 +141,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="fit yes">Yes</span></td>
           </tr>
           <tr class="family"><th scope="col" colspan="7">M2 &mdash; 2022 &middot; 5&nbsp;nm (2nd gen)</th></tr>
-          <tr class="no-fit">
+          <tr class="no-fit" data-gen="12" data-prefill="190" data-mem="24">
             <th scope="row">M2<span class="chip-meta">Air · mini · 13&Prime; Pro</span></th>
             <td>8&nbsp;·&nbsp;8&ndash;10</td>
             <td>8&ndash;24&nbsp;GB</td>
@@ -138,7 +150,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:11%"></i></span><span class="num">~12 <small>tk/s</small></span></span></td>
             <td><span class="fit no">24&nbsp;GB swap</span></td>
           </tr>
-          <tr>
+          <tr data-gen="24" data-prefill="390" data-mem="32">
             <th scope="row">M2&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP · mini</span></th>
             <td>10&ndash;12&nbsp;·&nbsp;16&ndash;19</td>
             <td>16&ndash;32&nbsp;GB</td>
@@ -147,7 +159,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:22%"></i></span><span class="num">~24 <small>tk/s</small></span></span></td>
             <td><span class="fit tight">32&nbsp;GB</span></td>
           </tr>
-          <tr>
+          <tr data-gen="46" data-prefill="780" data-mem="96">
             <th scope="row">M2&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
             <td>12&nbsp;·&nbsp;30&ndash;38</td>
             <td>32&ndash;96&nbsp;GB</td>
@@ -156,7 +168,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~46 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr>
+          <tr data-gen="88" data-prefill="1500" data-mem="192">
             <th scope="row">M2&nbsp;Ultra<span class="chip-meta">Studio · Pro&nbsp;Display&nbsp;XDR</span></th>
             <td>24&nbsp;·&nbsp;60&ndash;76</td>
             <td>64&ndash;192&nbsp;GB</td>
@@ -166,7 +178,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="fit yes">Yes</span></td>
           </tr>
           <tr class="family"><th scope="col" colspan="7">M3 &mdash; 2023 &middot; 3&nbsp;nm · Dynamic Caching · mesh shading</th></tr>
-          <tr class="no-fit">
+          <tr class="no-fit" data-gen="13" data-prefill="200" data-mem="24">
             <th scope="row">M3<span class="chip-meta">Air · 14&Prime; Pro · mini</span></th>
             <td>8&nbsp;·&nbsp;8&ndash;10</td>
             <td>8&ndash;24&nbsp;GB</td>
@@ -175,7 +187,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:12%"></i></span><span class="num">~13 <small>tk/s</small></span></span></td>
             <td><span class="fit no">24&nbsp;GB swap</span></td>
           </tr>
-          <tr>
+          <tr data-gen="18" data-prefill="290" data-mem="36">
             <th scope="row">M3&nbsp;Pro<span class="chip-meta">14&Prime;/16&Prime; MBP</span></th>
             <td>11&ndash;12&nbsp;·&nbsp;14&ndash;18</td>
             <td>18&ndash;36&nbsp;GB</td>
@@ -184,7 +196,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:16%"></i></span><span class="num">~18 <small>tk/s</small></span></span></td>
             <td><span class="fit tight">36&nbsp;GB</span></td>
           </tr>
-          <tr>
+          <tr data-gen="40-52" data-prefill="640-780" data-mem="128">
             <th scope="row">M3&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
             <td>14&ndash;16&nbsp;·&nbsp;30&ndash;40</td>
             <td>36&ndash;128&nbsp;GB</td>
@@ -193,7 +205,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:42%"></i></span><span class="num">~40&ndash;52 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr>
+          <tr data-gen="90" data-prefill="1500" data-mem="512">
             <th scope="row">M3&nbsp;Ultra<span class="chip-meta">Studio</span></th>
             <td>24&ndash;28&nbsp;·&nbsp;60&ndash;80</td>
             <td>96&ndash;512&nbsp;GB</td>
@@ -203,7 +215,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="fit yes">Yes</span></td>
           </tr>
           <tr class="family"><th scope="col" colspan="7">M4 &mdash; 2024 &middot; 3&nbsp;nm (2nd gen) · hardware ray tracing</th></tr>
-          <tr>
+          <tr data-gen="15" data-prefill="230" data-mem="32">
             <th scope="row">M4<span class="chip-meta">Air · mini · iMac · iPad&nbsp;Pro</span></th>
             <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
             <td>16&ndash;32&nbsp;GB</td>
@@ -212,7 +224,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:14%"></i></span><span class="num">~15 <small>tk/s</small></span></span></td>
             <td><span class="fit tight">32&nbsp;GB</span></td>
           </tr>
-          <tr>
+          <tr data-gen="32" data-prefill="520" data-mem="48">
             <th scope="row">M4&nbsp;Pro<span class="chip-meta">MBP · mini</span></th>
             <td>12&ndash;14&nbsp;·&nbsp;16&ndash;20</td>
             <td>24&ndash;48&nbsp;GB</td>
@@ -221,7 +233,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:29%"></i></span><span class="num">~32 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr>
+          <tr data-gen="55-65" data-prefill="800-950" data-mem="128">
             <th scope="row">M4&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
             <td>14&ndash;16&nbsp;·&nbsp;32&ndash;40</td>
             <td>36&ndash;128&nbsp;GB</td>
@@ -231,7 +243,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="fit yes">Yes</span></td>
           </tr>
           <tr class="family"><th scope="col" colspan="7">M5 &mdash; 2025 &middot; 3&nbsp;nm (3rd gen) · neural accelerators per GPU core</th></tr>
-          <tr>
+          <tr data-gen="20" data-prefill="290" data-mem="32">
             <th scope="row">M5<span class="chip-meta">14&Prime; MBP · iPad&nbsp;Pro (Air/mini follow)</span></th>
             <td>9&ndash;10&nbsp;·&nbsp;8&ndash;10</td>
             <td>16&ndash;32&nbsp;GB</td>
@@ -240,7 +252,7 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:18%"></i></span><span class="num">~20 <small>tk/s</small></span></span></td>
             <td><span class="fit tight">32&nbsp;GB</span></td>
           </tr>
-          <tr class="proj">
+          <tr class="proj" data-gen="38" data-prefill="520" data-mem="48">
             <th scope="row">M5&nbsp;Pro<span class="chip-meta">projected</span></th>
             <td>12&ndash;14&nbsp;·&nbsp;20<span class="proj-tag">est</span></td>
             <td>24&ndash;48&nbsp;GB</td>
@@ -249,26 +261,26 @@ import WaitlistForm from "../components/WaitlistForm.astro";
             <td><span class="speed"><span class="bar"><i style="width:35%"></i></span><span class="num">~38 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr>
+          <tr data-gen="75" data-prefill="1500" data-mem="128">
             <th scope="row">M5&nbsp;Max<span class="chip-meta">MBP · Studio</span></th>
             <td>16&ndash;18&nbsp;·&nbsp;32&ndash;40</td>
             <td>36&ndash;128&nbsp;GB</td>
             <td>614&nbsp;GB/s</td>
-            <td class="prefill">~1&thinsp;100&nbsp;tk/s</td>
+            <td class="prefill">~1&thinsp;500&nbsp;tk/s</td>
             <td><span class="speed"><span class="bar"><i style="width:68%"></i></span><span class="num">~75 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
-          <tr class="proj">
+          <tr class="proj" data-gen="100-125" data-prefill="3000-3200" data-mem="512">
             <th scope="row">M5&nbsp;Ultra<span class="chip-meta">forecast only</span></th>
             <td>28&ndash;32&nbsp;·&nbsp;60&ndash;80<span class="proj-tag">est</span></td>
             <td>96&ndash;512&nbsp;GB</td>
-            <td>819&nbsp;GB/s<span class="proj-tag">est</span></td>
-            <td class="prefill">~1&thinsp;500&nbsp;tk/s<span class="proj-tag">est</span></td>
-            <td><span class="speed"><span class="bar"><i style="width:70%"></i></span><span class="num">~70&ndash;85 <small>tk/s</small></span></span></td>
+            <td>~1&thinsp;200&nbsp;GB/s<span class="proj-tag">est</span></td>
+            <td class="prefill">~3&thinsp;000&ndash;3&thinsp;200&nbsp;tk/s<span class="proj-tag">est</span></td>
+            <td><span class="speed"><span class="bar"><i style="width:100%"></i></span><span class="num">~100&ndash;125 <small>tk/s</small></span></span></td>
             <td><span class="fit yes">Yes</span></td>
           </tr>
           <tr class="family"><th scope="col" colspan="7">M6 &mdash; 2026&ndash;27 &middot; 2&nbsp;nm<span class="proj-tag">projected</span></th></tr>
-          <tr class="proj">
+          <tr class="proj" data-gen="24-28" data-prefill="350-450" data-mem="32">
             <th scope="row">M6<span class="chip-meta">projected</span></th>
             <td>10&ndash;12&nbsp;·&nbsp;10&ndash;12<span class="proj-tag">est</span></td>
             <td>16&ndash;32&nbsp;GB</td>
@@ -283,3 +295,98 @@ import WaitlistForm from "../components/WaitlistForm.astro";
     <p class="mt-4 text-sm text-muted-aa"><strong>Reading the table:</strong> the base model is Qwen&nbsp;27B at 4-bit MLX quantization (~15&nbsp;GB of weights + ~1.3&nbsp;GB of KV cache per 4&thinsp;K tokens of context). Generation speed is <em>bandwidth&nbsp;&divide;&nbsp;15&nbsp;GB</em> in the limit, which is why an M1&nbsp;Max outruns a new base&nbsp;M4 and why &ldquo;2023 laptop&rdquo; tells you nothing on its own. Prefill is compute-bound &mdash; the M1&rsquo;s original GPU shuffles a 32&thinsp;K-token document in about 4 minutes where an M4&nbsp;Max needs ~40&nbsp;seconds. <strong>M1 owners:</strong> at 16&nbsp;GB the 27B genuinely does not fit &mdash; and at 8&nbsp;GB nothing bigger than 7B does. KonaClaw offers you Qwen3&nbsp;8B instead, which runs respectably. <strong>M5&nbsp;Pro, M5&nbsp;Ultra and M6 are projections</strong> from public analyst forecasts and architectural trends, marked <span class="proj-tag">est</span> &mdash; we will publish measured numbers the week each machine ships, measured by KonaClaw&rsquo;s first-launch benchmark on your exact silicon.</p>
   </section>
 </Base>
+
+<script>
+  // Qwen27B-4bit: ~15 GB weights, ~1.3 GB KV cache per 4K tokens (GQA).
+  // Generation tok/s = bandwidth-bound: 15 / (15 + KV). KV grows linearly.
+  // Prefill tok/s = compute-bound, but attention cost per token grows
+  // linearly with position, so effective throughput ~ base / (1 + 0.007·ctxK).
+  const WEIGHTS = 15, KV_PER_4K = 1.3, OVERHEAD = 2, ATT_K = 0.007;
+
+  const fmt = (n: number): string => {
+    if (n >= 1000) return Math.round(n).toLocaleString("en-US");
+    if (n >= 10) return String(Math.round(n));
+    return (Math.round(n * 10) / 10).toFixed(1);
+  };
+
+  const rows = [...document.querySelectorAll<HTMLTableRowElement>(
+    "table.chip-table tbody tr[data-gen]")];
+
+  function apply(ctxK: number) {
+    const kv = KV_PER_4K * (ctxK / 4);
+    const need = WEIGHTS + kv + OVERHEAD;
+    // Normalized at 4K so the default view matches the static table exactly.
+    const genF = (WEIGHTS / (WEIGHTS + kv)) / (WEIGHTS / (WEIGHTS + KV_PER_4K));
+    const preF = (1 / (1 + ATT_K * ctxK)) / (1 / (1 + ATT_K * 4));
+    let maxGen = 0;
+    for (const tr of rows) maxGen = Math.max(maxGen, hi(parse(tr.dataset.gen!)) * genF);
+
+    for (const tr of rows) {
+      const [gLo, gHi] = parse(tr.dataset.gen!).map(v => v * genF);
+      const [pLo, pHi] = parse(tr.dataset.prefill!).map(v => v * preF);
+      const mem = Number(tr.dataset.mem!);
+
+      const bar = tr.querySelector<HTMLElement>(".speed .bar i");
+      const num = tr.querySelector<HTMLElement>(".speed .num");
+      if (bar && num) {
+        bar.style.width = Math.max(2, Math.round((gHi / maxGen) * 100)) + "%";
+        num.innerHTML = range(gLo, gHi) + " <small>tk/s</small>";
+      }
+      const pf = tr.querySelector<HTMLElement>(".prefill");
+      if (pf && pf.firstChild && pf.firstChild.nodeType === Node.TEXT_NODE) {
+        pf.firstChild.textContent = "~" + range(pLo, pHi) + "\u00a0tk/s";
+      }
+
+      const fit = tr.querySelector<HTMLElement>(".fit");
+      if (fit) {
+        if (need <= mem) {
+          fit.className = "fit yes";
+          fit.textContent = "Yes";
+          tr.classList.remove("no-fit");
+        } else if (need <= mem * 1.15) {
+          fit.className = "fit tight";
+          fit.textContent = mem + "\u00a0GB swap";
+          tr.classList.remove("no-fit");
+        } else {
+          fit.className = "fit no";
+          fit.textContent = "No \u00b7 needs " + fmt(need) + "\u00a0GB";
+          tr.classList.add("no-fit");
+        }
+      }
+    }
+
+    for (const s of document.querySelectorAll<HTMLElement>(".ctx-head")) {
+      s.textContent = ctxLabel(ctxK);
+    }
+    const note = document.querySelector<HTMLElement>(".ctx-note");
+    if (note) {
+      const kvTxt = kv >= 1 ? fmt(kv) + "\u00a0GB" : Math.round(kv * 1000) + "\u00a0MB";
+      note.textContent = "At " + ctxLabel(ctxK) + " the KV cache adds " + kvTxt
+        + " on top of the ~15\u00a0GB of weights \u2014 total ~" + fmt(need)
+        + "\u00a0GB. Generation slows by ~" + Math.round((1 - genF) * 100)
+        + "% and prefill by ~" + Math.round((1 - preF) * 100)
+        + "% versus a 4\u00a0K chat.";
+      note.hidden = ctxK === 4;
+    }
+  }
+
+  function parse(v: string): [number, number] {
+    const p = v.split("-").map(Number);
+    return [p[0], p.length > 1 ? p[1] : p[0]];
+  }
+  const hi = (p: [number, number]) => p[1];
+  const range = (lo: number, gHi: number) =>
+    lo === gHi ? "~" + fmt(lo) : "~" + fmt(lo) + "\u2013" + fmt(gHi);
+  const ctxLabel = (k: number) =>
+    k >= 1000 ? (k / 1000) + "\u00a0M" : k + "\u00a0K";
+
+  for (const btn of document.querySelectorAll<HTMLButtonElement>(".ctx-btn")) {
+    btn.addEventListener("click", () => {
+      for (const b of document.querySelectorAll<HTMLButtonElement>(".ctx-btn")) {
+        b.classList.toggle("is-active", b === btn);
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      }
+      apply(Number(btn.dataset.ctx));
+    });
+  }
+</script>

@@ -187,6 +187,45 @@
 
 /* Full-bleed: breaks the section out of main's max-w-6xl so the aurora
    reaches the viewport edges instead of being sliced by the container. */
+/* Context-window picker: recalculates prefill/generation/fit per chip */
+.ctx-picker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+}
+.ctx-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted-aa);
+}
+.ctx-options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.ctx-btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid rgb(var(--accent-deep) / 0.35);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.ctx-btn:hover { background: rgb(var(--accent-deep) / 0.1); }
+.ctx-btn.is-active {
+  color: #fff;
+  background: rgb(var(--accent-deep));
+  border-color: rgb(var(--accent-deep));
+}
+.ctx-note {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--color-muted-aa);
+  max-width: 46rem;
+}
 .hero-bleed {
   width: 100vw;
   margin-left: calc(50% - 50vw);
