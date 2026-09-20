@@ -11,5 +11,4 @@ detail: >
   YouTube transcripts. Attach one to a chat and answers are drawn only from
   it, with citations that open the exact passage. While a notebook is
   attached, web search is switched off so grounded means grounded.
-screenshot: notebooks.png
 requires: []

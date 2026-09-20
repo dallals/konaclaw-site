@@ -11,5 +11,4 @@ detail: >
   for deep work. Kona uses macOS EventKit, so it edits the same calendars
   your Calendar app shows, across every account you have signed in. Nothing
   is copied anywhere.
-screenshot: chat-week.png
 requires: []

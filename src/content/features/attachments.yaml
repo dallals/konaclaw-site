@@ -10,5 +10,4 @@ detail: >
   Drop a file onto the conversation and ask about it. Documents are parsed
   on the machine; images and scanned pages are read with on-device text
   recognition and a local vision model. Nothing is uploaded anywhere.
-screenshot: chat-week.png
 requires: []

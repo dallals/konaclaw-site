@@ -11,5 +11,4 @@ detail: >
   a weekly report to formatting a document. Type a slash and pick one. Kona
   watches for routines you repeat and offers to save them as a skill, ready
   for review before it ever runs.
-screenshot: chat-skill.png
 requires: []

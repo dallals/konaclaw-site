@@ -11,5 +11,4 @@ detail: >
   researcher, a summarizer, a fact-checker. Long jobs run detached, you keep
   the chat, and results come back as their own message, with a Stop button
   if you change your mind.
-screenshot: activity.png
 requires: []

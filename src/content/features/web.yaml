@@ -11,5 +11,4 @@ detail: >
   so sites that need JavaScript still work and nothing is proxied through a
   third party. Answers link to their sources. A per-turn source cap keeps a
   runaway research question from reading the whole internet.
-screenshot: chat-web.png
 requires: []

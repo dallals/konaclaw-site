@@ -10,5 +10,4 @@ detail: >
   Kona reads Contacts through macOS, read-only. It uses them to resolve
   people you mention, fill in addresses, and answer questions like "what's
   the dentist's number." It never edits or exports your contacts.
-screenshot: chat-mail.png
 requires: []

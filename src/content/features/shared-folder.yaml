@@ -10,5 +10,4 @@ detail: >
   The shared folder is the hand-off point. Kona reads documents you place
   there, writes results back as files you can open, and keeps a recall
   index so "that spreadsheet from March" is findable later.
-screenshot: chat-week.png
 requires: []

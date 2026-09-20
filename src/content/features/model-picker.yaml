@@ -11,5 +11,4 @@ detail: >
   tier and a deep tier by task complexity, and it never silently downgrades
   mid-conversation. A thinking-level control lets you trade speed for
   thoroughness on models that support it.
-screenshot: models.png
 requires: []

@@ -11,5 +11,4 @@ detail: >
   Jobs survive restarts and failures, retry sensibly, and deliver to the
   dashboard, with the option to mirror to Apple Reminders so they reach your
   phone.
-screenshot: automations.png
 requires: []

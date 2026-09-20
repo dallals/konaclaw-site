@@ -11,5 +11,4 @@ detail: >
   model, and how many tokens it cost, with per-turn timelines. It exists so
   you never have to wonder what an assistant with access to your mail was
   doing.
-screenshot: activity.png
 requires: []

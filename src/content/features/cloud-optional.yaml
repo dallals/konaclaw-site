@@ -10,5 +10,4 @@ detail: >
   Some questions deserve the biggest model available. Add a provider key in
   Settings and pick that model for one chat, one agent, or one task. Local
   stays the default, and the model in use is always shown on the message.
-screenshot: models.png
 requires: []

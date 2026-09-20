@@ -11,5 +11,4 @@ detail: >
   the model you picked, and restarts itself if it ever falls over. Chat,
   vision, and the embeddings behind memory and notebooks all run through it.
   You choose the model from a catalog sized to your Mac's memory.
-screenshot: models.png
 requires: []

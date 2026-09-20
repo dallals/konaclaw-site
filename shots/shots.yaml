@@ -12,24 +12,12 @@
 - id: chat-brief
   conv: brief
   ready: 'text=Good morning'
-- id: chat-skill
-  conv: skill
-  ready: 'text=weekly-report'
-- id: chat-web
-  conv: web
-  ready: 'text=Model A'
-- id: chat-chart
-  conv: chart
-  ready: 'text=grocery spending'
 - id: models
   route: /models
   ready: 'role=heading'
 - id: automations
   route: /automations
   ready: 'text=Bike-lane news'
-- id: activity
-  route: /activity
-  ready: 'role=heading'
 - id: notebooks
   route: /notebooks
   click: 'text=Field Guide to Local Birds'

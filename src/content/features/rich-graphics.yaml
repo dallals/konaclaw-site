@@ -10,5 +10,4 @@ detail: >
   Say "chart this" or use the chart, diagram, and poster commands. Kona
   renders the result with a local WebKit engine and attaches the image to
   its reply. Comparisons and reports can include them automatically.
-screenshot: chat-chart.png
 requires: []

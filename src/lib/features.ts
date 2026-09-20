@@ -1,17 +1,11 @@
-export type Status = "shipped" | "v1_1" | "planned";
-export type Outcome = "private" | "your-mac" | "memory" | "automation" | "notebooks";
+import type { z } from "astro/zod";
+import type { featureSchema } from "./featureSchema";
 
-export interface Feature {
-  id: string;
-  name: string;
-  outcome: Outcome;
-  status: Status;
-  headline: string;
-  summary: string;
-  detail: string;
-  screenshot: string;
-  requires: string[];
-}
+// One definition, one type: the shape a page sees is exactly what the collection
+// schema validated. Adding or removing a YAML field cannot silently skip the pages.
+export type Feature = z.infer<typeof featureSchema>;
+export type Status = Feature["status"];
+export type Outcome = Feature["outcome"];
 
 export const OUTCOMES: { id: Outcome; title: string; blurb: string; href: string }[] = [
   { id: "private",    title: "Runs entirely on your Mac",     blurb: "Your words, your mail, your calendar never leave the machine.", href: "/private" },
@@ -21,11 +15,15 @@ export const OUTCOMES: { id: Outcome; title: string; blurb: string; href: string
   { id: "notebooks",  title: "Grounded in your own sources",  blurb: "Ask questions of your documents and get cited answers.", href: "/notebooks" },
 ];
 
+// The DOM id a FeatureCard renders. Namespaced so a feature id can never collide with an
+// outcome section's id (`memory` is both a feature and an outcome) — see features.test.ts.
+export const cardId = (id: string) => `f-${id}`;
+
 export const visible = (fs: Feature[]) => fs.filter((f) => f.status === "shipped");
 export const comingSoon = (fs: Feature[]) => fs.filter((f) => f.status === "v1_1");
 
 export function groupByOutcome(fs: Feature[]) {
-  const shown = fs.filter((f) => f.status !== "planned");
+  const shown = fs.filter((f) => f.status === "shipped");
   return OUTCOMES
     .map((o) => ({ outcome: o.id, title: o.title, features: shown.filter((f) => f.outcome === o.id) }))
     .filter((g) => g.features.length > 0);

@@ -11,5 +11,4 @@ detail: >
   summarized, and send the reply from your own address. Fast search runs
   against the mail index rather than opening every message. Sending is
   always a separate, confirmed step.
-screenshot: chat-mail.png
 requires: []

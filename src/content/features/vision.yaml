@@ -10,5 +10,4 @@ detail: >
   when the chat model itself is text-only, it can ask the vision model what
   an image shows and carry on. Useful for receipts, error dialogs, and
   handwritten notes.
-screenshot: chat-web.png
 requires: []

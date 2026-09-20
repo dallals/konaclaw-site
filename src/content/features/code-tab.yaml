@@ -11,5 +11,4 @@ detail: >
   ask for a change, and review a per-file diff before keeping it. Commands
   run in managed processes you can stop. It is a power feature and lives
   here rather than on the home page.
-screenshot: activity.png
 requires: []

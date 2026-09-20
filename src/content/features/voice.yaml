@@ -10,5 +10,4 @@ detail: >
   Press the microphone to dictate; transcription runs on-device. Turn on
   read-aloud and replies are spoken by a neural voice that also runs
   locally. Both are optional and off by default.
-screenshot: chat-week.png
 requires: []

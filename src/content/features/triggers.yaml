@@ -11,5 +11,4 @@ detail: >
   allow, and your portfolio. Kona reads each event and decides whether to
   speak, so a noisy feed does not become a noisy assistant. Every fire is
   logged, and rules can opt out of low-power pauses.
-screenshot: automations.png
 requires: []
