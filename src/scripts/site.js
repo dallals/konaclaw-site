@@ -100,7 +100,7 @@ if (!reduceMotion) {
 
 /* ---- Spotlight glow on cards (assurance cards + capability feature cards) ---- */
 if (!reduceMotion) {
-  document.querySelectorAll("[data-spotlight], [data-glow]").forEach((el) => {
+  document.querySelectorAll("[data-spotlight]").forEach((el) => {
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
       el.style.setProperty("--mx", `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`);
@@ -109,48 +109,67 @@ if (!reduceMotion) {
   });
 }
 
-/* ---- Hero screenshot stack: tabs + auto crossfade ---- */
+/* ---- Hero screenshot stage: tabs swap one <img>'s src on demand ----
+   Only the visible screenshot is ever fetched. Auto-advance pauses on
+   hover AND focus-within AND pointer/keyboard interaction (WCAG 2.2.2 —
+   moving content must be pausable by keyboard, not just a mouse). */
 const stack = document.querySelector("[data-stack]");
 if (stack) {
-  const panes = [...stack.querySelectorAll(".shot-pane")];
+  const img = stack.querySelector("[data-shot-img]");
   const tabs = [...stack.querySelectorAll(".shot-tab")];
+  const cfgs = JSON.parse(stack.dataset.shots || "[]");
+  const all = [{ src: img.getAttribute("src"), srcset: img.getAttribute("srcset"), alt: img.getAttribute("alt") }, ...cfgs];
+  const interval = parseInt(stack.dataset.interval, 10) || 5200;
   let active = 0;
   let timer = 0;
+  let hovering = false;
+  let focused = false;
 
   const select = (i) => {
-    panes[active].classList.remove("is-active");
-    panes[active].setAttribute("inert", "");
-    tabs[active].setAttribute("aria-selected", "false");
-    tabs[active].tabIndex = -1;
-    active = (i + panes.length) % panes.length;
-    panes[active].classList.add("is-active");
-    panes[active].removeAttribute("inert");
-    tabs[active].setAttribute("aria-selected", "true");
-    tabs[active].tabIndex = 0;
+    if (i === active) return;
+    const cfg = all[i];
+    active = i;
+    const panel = stack.querySelector("#shot-panel");
+    if (panel) panel.setAttribute("aria-labelledby", `shot-tab-${i}`);
+    img.classList.add("is-swapping");
+    tabs.forEach((t, j) => {
+      t.setAttribute("aria-selected", j === i ? "true" : "false");
+      t.tabIndex = j === i ? 0 : -1;
+    });
+    // Let the pane fade out before repainting the new shot (no ghosting).
+    setTimeout(() => {
+      img.src = cfg.src;
+      if (cfg.srcset) img.srcset = cfg.srcset;
+      img.alt = cfg.alt;
+      img.onload = () => img.classList.remove("is-swapping");
+      // Restart the ken-burns on the freshly swapped image.
+      if (!reduceMotion) {
+        img.style.animation = "none";
+        void img.offsetWidth;
+        img.style.animation = "";
+      }
+    }, reduceMotion ? 0 : 200);
   };
   const stop = () => { if (timer) { clearInterval(timer); timer = 0; } };
-  const start = () => { stop(); if (!reduceMotion) timer = setInterval(() => select(active + 1), 5200); };
+  const maybeStart = () => { stop(); if (!reduceMotion && !hovering && !focused) timer = setInterval(() => select((active + 1) % all.length), interval); };
 
-  panes[0].classList.add("is-active");
-  tabs.forEach((t, i) => {
-    t.addEventListener("click", () => { select(i); start(); });
-  });
-  stack.addEventListener("pointerenter", stop);
-  stack.addEventListener("pointerleave", start);
-  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  tabs.forEach((t, i) => t.addEventListener("click", () => { select(i); maybeStart(); }));
+  stack.addEventListener("pointerenter", () => { hovering = true; stop(); });
+  stack.addEventListener("pointerleave", () => { hovering = false; maybeStart(); });
+  // Keyboard users get a stable selection while they're in the tablist.
+  stack.addEventListener("focusin", () => { focused = true; stop(); });
+  stack.addEventListener("focusout", () => { focused = false; maybeStart(); });
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : maybeStart()));
 
   /* arrow-key support on the tablist */
   const tablist = stack.querySelector("[role='tablist']");
   tablist?.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
-    const next = (active + (e.key === "ArrowRight" ? 1 : -1) + panes.length) % panes.length;
+    const next = (active + (e.key === "ArrowRight" ? 1 : -1) + all.length) % all.length;
     select(next);
     tabs[next].focus();
-    start();
   });
-
-  start();
 }
 
 /* ---- Capabilities page: count-up, sticky-rail scrollspy, smooth jumps ----

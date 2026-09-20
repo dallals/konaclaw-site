@@ -9,7 +9,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 <header class="nav-glass border-b border-line">
   <span aria-hidden="true" class="scroll-progress"></span>
-  <nav aria-label="Primary" class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5">
+  <nav aria-label="Primary" class="nav-bar mx-auto flex max-w-6xl items-center justify-between gap-3 px-4">
     <a href="/" aria-label="KonaClaw home" class="nav-brand shrink-0 no-underline transition hover:opacity-80">
       <span class="hidden sm:inline-flex"><Mark /></span>
       <span class="sm:hidden"><Mark wordmark={false} /></span>
@@ -27,6 +27,9 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 </header>
 
 <style is:global>
+  /* Vertical padding comes from --nav-py so --nav-h stays truthful. */
+  .nav-bar { padding-block: var(--nav-py); }
+
   /* Animated underline; stays lit on the active page (aria-current). */
   .nav-link { position: relative; }
   .nav-link::after {

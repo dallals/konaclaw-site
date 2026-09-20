@@ -33,6 +33,15 @@
 /* Element defaults belong in the base layer: unlayered rules outrank every
    Tailwind utility, so `a { color }` / `a { text-decoration }` here would beat
    `text-on-accent` and `no-underline` on the buttons and nav links that opt out. */
+/* Sticky nav geometry — single source of truth. Nav.astro renders its
+   padding from these; .scroll-progress, .cap-rail and every scroll-margin
+   derive from --nav-h so the next padding change can't orphan them.
+   (Wordmark text at 16px/1.5 rounds the content box to 35.5px.) */
+:root {
+  --nav-py: 14px;
+  --nav-h: calc(2 * var(--nav-py) + 35.5px);
+}
+
 @layer base {
   html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
   body { margin: 0; -webkit-font-smoothing: antialiased; }
@@ -106,6 +115,11 @@
   }
 }
 
+/* Anchor targets clear the sticky nav via --nav-h (plus room for the
+   sticky rail on the capabilities page) instead of magic Tailwind steps. */
+.cap-section { scroll-margin-top: calc(var(--nav-h) + 88px); }
+[data-cap-jump] { scroll-margin-top: var(--nav-h); }
+
 /* ---- Scroll progress hairline, lives inside the sticky nav ---- */
 .scroll-progress {
   position: absolute;
@@ -147,36 +161,19 @@
   transition: opacity 0.35s ease;
   background: radial-gradient(28rem 28rem at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.14), transparent 65%);
 }
-.shot-tilt-wrap:hover .shot-sheen, .shot-pane:hover .shot-sheen { opacity: 1; }
+.shot-frame:hover .shot-sheen { opacity: 1; }
 
-/* ---- Hero screenshot stack: tabs + crossfade ---- */
+/* ---- Hero screenshot stage: one frame, src swapped by site.js ---- */
 .shot-stage { position: relative; }
-.shot-pane {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-.shot-pane:first-child { position: relative; } /* sizes the stage */
-/* No JS: the first pane shows and the rest (which can't be switched to) hide. */
-html:not(.js) .shot-pane:not(:first-child) { display: none; }
-/* JS takes over: panes fade out first, then the next fades in, so two
-   dense screenshots never overlap mid-crossfade and ghost readable text. */
-.js .shot-pane {
-  opacity: 0;
-  transform: scale(0.985);
-  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.js .shot-pane.is-active {
-  opacity: 1;
-  transform: scale(1);
-  transition: opacity 0.35s ease 0.2s, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
-}
+/* The frame crossfades itself while the src changes (see .is-swapping). */
+.shot-frame img { transition: opacity 0.3s ease; }
+.shot-frame img.is-swapping { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
-  .shot-pane { transition: none; }
+  .shot-frame img { transition: none; }
 }
-/* Gentle Ken Burns drift on the active hero shot, so each frame feels alive. */
+/* Gentle Ken Burns drift on each shot as it lands, so each frame feels alive. */
 @media (prefers-reduced-motion: no-preference) {
-  .shot-stack .shot-pane.is-active img { animation: kenburns 9s ease-out both; }
+  .shot-stack [data-shot-img] { animation: kenburns 9s ease-out both; }
   @keyframes kenburns {
     from { transform: scale(1.045); }
     to   { transform: scale(1); }
@@ -201,7 +198,9 @@ html:not(.js) .shot-pane:not(:first-child) { display: none; }
   border-bottom-color: var(--color-accent);
 }
 
-/* ---- Spotlight glow following the cursor across assurance cards ---- */
+/* ---- Spotlight glow following the cursor across assurance cards ----
+   Light mode: accent-bright at 0.14 over cream panel is imperceptible, so
+   darken the tint and run it full-strength; dark mode keeps the faint one. */
 [data-spotlight] { position: relative; isolation: isolate; overflow: hidden; }
 [data-spotlight]::after {
   content: "";
@@ -210,6 +209,11 @@ html:not(.js) .shot-pane:not(:first-child) { display: none; }
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
-  background: radial-gradient(20rem 20rem at var(--mx, 50%) var(--my, 50%), rgb(var(--accent-bright) / 0.14), transparent 70%);
+  background: radial-gradient(20rem 20rem at var(--mx, 50%) var(--my, 50%), rgb(var(--accent-deep) / 0.16), transparent 70%);
 }
 [data-spotlight]:hover::after { opacity: 1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-spotlight]::after {
+    background: radial-gradient(20rem 20rem at var(--mx, 50%) var(--my, 50%), rgb(var(--accent-bright) / 0.14), transparent 70%);
+  }
+}
