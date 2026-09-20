@@ -13,10 +13,14 @@ jobs:
       - run: npx vitest run
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - run: npx astro preview --host 127.0.0.1 --port 4321
-      - run: npx playwright test
+      # `astro preview` daemonizes on macOS but stays in the foreground on the Linux runner;
+      # start it in the background either way, wait for the port, then test.
+      - run: |
+          (npx astro preview --host 127.0.0.1 --port 4321 &)
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:4321/ >/dev/null && break; sleep 1; done
+          npx playwright test
       - if: always()
-        run: npx astro preview stop
+        run: npx astro preview stop || true
       - uses: lycheeverse/lychee-action@v2
         with: { args: "--offline --root-dir ./dist ./dist", fail: true }
       - run: npx lhci autorun
