@@ -26,6 +26,8 @@
   --color-muted-aa: rgb(var(--muted-aa));
   --color-ok-aa: rgb(var(--ok-aa));
   --color-warn-aa: rgb(var(--warn-aa));
+  --color-btn: rgb(var(--btn));
+  --color-link: rgb(var(--link));
 }
 
 /* Element defaults belong in the base layer: unlayered rules outrank every
@@ -34,7 +36,7 @@
 @layer base {
   html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
   body { margin: 0; -webkit-font-smoothing: antialiased; }
-  a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  a { color: var(--color-link); text-decoration: underline; text-underline-offset: 3px; }
   :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 }
 .prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
