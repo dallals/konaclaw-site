@@ -22,11 +22,20 @@
   --color-warn: rgb(var(--warn));
   --color-bad: rgb(var(--bad));
   --color-on-accent: rgb(var(--on-accent));
+  /* Site-only AA variants (see tokens.css). */
+  --color-muted-aa: rgb(var(--muted-aa));
+  --color-ok-aa: rgb(var(--ok-aa));
+  --color-warn-aa: rgb(var(--warn-aa));
 }
 
-html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
-body { margin: 0; -webkit-font-smoothing: antialiased; }
-a { color: var(--color-accent-deep); text-underline-offset: 3px; }
-:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+/* Element defaults belong in the base layer: unlayered rules outrank every
+   Tailwind utility, so `a { color }` / `a { text-decoration }` here would beat
+   `text-on-accent` and `no-underline` on the buttons and nav links that opt out. */
+@layer base {
+  html { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
+  body { margin: 0; -webkit-font-smoothing: antialiased; }
+  a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+}
 .prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
 .prose-kc p  { max-width: 65ch; line-height: 1.65; margin: 0.75rem 0; }

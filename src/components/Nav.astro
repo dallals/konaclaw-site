@@ -9,7 +9,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 <header class="border-b border-line">
   <nav aria-label="Primary" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-    <a href="/" aria-label="KonaClaw home"><Mark /></a>
+    <a href="/" aria-label="KonaClaw home" class="no-underline"><Mark /></a>
     <ul class="flex items-center gap-6 text-sm">
       {items.map((i) => (
         <li><a href={i.href} aria-current={path === i.href ? "page" : undefined}

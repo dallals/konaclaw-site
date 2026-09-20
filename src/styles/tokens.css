@@ -44,3 +44,20 @@
     color-scheme: dark;
   }
 }
+
+/* Site-only AA variants. The block above is the dashboard's Cinnamon palette,
+   copied verbatim and never altered; these derivatives exist only so this
+   site's readable text and buttons clear WCAG AA (4.5:1). They are not part
+   of the dashboard palette and never appear in a screenshot. */
+:root {
+  --muted-aa:     108  94  82;
+  --ok-aa:         40 104  56;
+  --warn-aa:      134  88  18;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --muted-aa:   196 178 160;
+    --ok-aa:      120 200 134;
+    --warn-aa:    236 184  96;
+  }
+}
