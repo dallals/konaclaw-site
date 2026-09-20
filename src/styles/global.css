@@ -51,6 +51,32 @@
 .prose-kc h2 { font-size: 1.5rem; line-height: 1.2; font-weight: 600; color: var(--color-text-strong); margin: 2.5rem 0 0.75rem; }
 .prose-kc p  { max-width: 65ch; line-height: 1.65; margin: 0.75rem 0; }
 
+/* Download page's hardware/model matrix. Row headers stay bold so the
+   "your Mac" column reads as the key; cells scroll horizontally on mobile. */
+.spec-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.spec-table th, .spec-table td {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgb(var(--line));
+  vertical-align: top;
+}
+.spec-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted-aa);
+  border-bottom-color: rgb(var(--line-bright));
+  white-space: nowrap;
+}
+.spec-table tbody th { font-weight: 600; color: var(--color-text-strong); padding-left: 0; }
+.spec-table td { color: var(--color-text); }
+.spec-table tbody tr:last-child th, .spec-table tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 640px) {
+  .spec-table { font-size: 0.8125rem; }
+  .spec-table th, .spec-table td { padding: 0.7rem 0.75rem; }
+}
+
 /* Full-bleed: breaks the section out of main's max-w-6xl so the aurora
    reaches the viewport edges instead of being sliced by the container. */
 .hero-bleed {

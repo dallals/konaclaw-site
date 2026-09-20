@@ -22,6 +22,56 @@ import WaitlistForm from "../components/WaitlistForm.astro";
         <li>16 GB of memory or more. Larger models want 32 GB or more.</li>
         <li>About 10 GB of disk for the app and a first model.</li>
       </ul>
+      <p>The rule of thumb: a 4-bit model needs roughly 0.7&nbsp;GB per billion parameters, plus room for macOS and your apps. KonaClaw checks your Mac at first launch and never downloads a model that doesn't fit comfortably.</p>
     </div>
+  </section>
+  <section class="mt-16">
+    <h2 class="text-2xl font-semibold tracking-tight text-text-strong">A model sized to your Mac</h2>
+    <p class="mt-3 max-w-prose text-text">Setup picks the sweet-spot model for your machine automatically, and you can switch any time in Settings. Here is what each tier runs, with approximate generation speeds for 4-bit MLX builds in a chat workload (long contexts and thermal throttling pull these down a little).</p>
+    <div class="mt-6 overflow-x-auto">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th scope="col">Your Mac</th>
+            <th scope="col">Recommended MLX models</th>
+            <th scope="col">Approx. speed</th>
+            <th scope="col">What it feels like</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="whitespace-nowrap">M1 · 16 GB<br class="hidden sm:block"><span class="text-muted-aa text-sm font-normal">(Air, mini, MBP)</span></th>
+            <td>Qwen3&nbsp;8B · Llama&nbsp;3.1&nbsp;8B</td>
+            <td class="whitespace-nowrap">~15–20 tok/s</td>
+            <td>Comfortable chat, drafts and mail triage. Stick to 8B and close the 40-tab browser window.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="whitespace-nowrap">M1 Pro / Max · M2 · M3<br><span class="text-muted-aa text-sm font-normal">16–32 GB</span></th>
+            <td>Qwen3&nbsp;14B · gpt-oss-20b<br><span class="text-muted-aa text-sm">24B if you have 32&nbsp;GB</span></td>
+            <td class="whitespace-nowrap">~25–45 tok/s</td>
+            <td>The capable middle of the road. 32&nbsp;GB unlocks Mistral&nbsp;Small&nbsp;24B and its much better tool use.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="whitespace-nowrap">M4 · M5<br><span class="text-muted-aa text-sm font-normal">24–32 GB</span></th>
+            <td>Mistral&nbsp;Small&nbsp;24B · Qwen3-30B-A3B</td>
+            <td class="whitespace-nowrap">~60–90 tok/s</td>
+            <td>Fast. The sparse MoE models (only ~3B active parameters) answer faster than you read.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="whitespace-nowrap">M4 Pro / Max · M5 Pro / Max<br><span class="text-muted-aa text-sm font-normal">48–64 GB</span></th>
+            <td>Qwen3&nbsp;32B · gpt-oss-120b<br><span class="text-muted-aa text-sm">120B needs 64&nbsp;GB</span></td>
+            <td class="whitespace-nowrap">~35–55 tok/s at 120B</td>
+            <td>Frontier-class quality, still local. gpt-oss-120b is the best model that fits a desk Mac today.</td>
+          </tr>
+          <tr>
+            <th scope="row" class="whitespace-nowrap">Studio / Ultra · M3 Ultra and later<br><span class="text-muted-aa text-sm font-normal">96–512 GB</span></th>
+            <td>Llama&nbsp;3.3&nbsp;70B · gpt-oss-120b · bigger still</td>
+            <td class="whitespace-nowrap">~30–50 tok/s at 70B+</td>
+            <td>Server-class models on your desk, quietly. Everything the catalog offers, at full size.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-sm text-muted-aa">Speeds are ballpark figures from public MLX benchmarks on comparable hardware, not promises; your mileage varies with context length, background load, and whether the fans have anything better to do. The first-launch benchmark measures your actual Mac and labels each model honestly before you download it.</p>
   </section>
 </Base>
