@@ -24,9 +24,23 @@ def post(path, body):
     req = urllib.request.Request(BASE + path, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=5) as r: return json.load(r)
 
+def patch(path, body):
+    req = urllib.request.Request(BASE + path, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"}, method="PATCH")
+    with urllib.request.urlopen(req, timeout=5) as r: return json.load(r)
+
 resp = get("/triggers")
 rows = resp if isinstance(resp, list) else resp.get("triggers", [])
 existing = {t["name"] for t in rows}
 for r in RULES:
     if r["name"] in existing: continue
     post("/triggers", r); print("created", r["name"])
+
+# System-owned rules (agenda heartbeat, daily brief) default to the telegram
+# channel, a v1.1 feature that must never appear in a screenshot: point them
+# at the dashboard.
+resp = get("/triggers")
+rows = resp if isinstance(resp, list) else resp.get("triggers", [])
+for t in rows:
+    if t.get("delivery_channel") == "telegram":
+        patch(f"/triggers/{t['id']}", {"delivery_channel": "dashboard"})
+        print("re-channelled", t["name"])

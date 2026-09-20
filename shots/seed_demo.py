@@ -76,6 +76,7 @@ def main():
         f"name: {AGENT}\nmodel: demo/no-live-turns\nsystem_prompt: |\n  You are Kona, a personal assistant. (Demo profile; no live turns are run.)\n")
     con = sqlite3.connect(HOME / "data" / "konaclaw.db"); con.executescript(DDL)
     con.execute("DELETE FROM messages"); con.execute("DELETE FROM conversations")
+    con.execute("DELETE FROM sqlite_sequence WHERE name IN ('messages', 'conversations')")
     for f in (HOME / "data").glob("conv_*.id"): f.unlink()
     t0 = time.time() - 6 * 86400
     for i, (key, (title, msgs)) in enumerate(TRANSCRIPTS.items()):

@@ -47,9 +47,14 @@ rm -f "$DEMO/sup.pid" "$DEMO/dash.pid"
 # an embeddings model + a local inference URL are added; no secrets, no
 # ~/.konaclaw.env values (Telegram token, mail backend) are inherited, and
 # only invented demo text / public-domain book text is ever sent to it.
+# KC_CHROME_TOKEN is pre-set so kc_supervisor/chrome_token.py never reads or
+# writes the real ~/.konaclaw.env (it only touches that file when the token
+# isn't already in the environment).
+# Needs the always-on local engine on :8901 for notebook embeddings
+# (KC_EMBED_*); the pipeline is not hermetic without it.
 ( cd "$KC_REPO/kc-supervisor" && env -i HOME="$HOME" PATH="$PATH" \
     KC_HOME="$DEMO" KC_PORT=8766 KC_DEFAULT_AGENT=Kona-AI \
-    KC_TRIGGERS_ENABLED=true KC_NOTEBOOKS_ENABLED=true \
+    KC_TRIGGERS_ENABLED=true KC_CHROME_TOKEN=demo-not-a-real-token KC_NOTEBOOKS_ENABLED=true \
     KC_EMBED_BACKEND=engine KC_EMBED_URL=http://127.0.0.1:8901/v1 KC_EMBED_MODEL=modernbert-embed-base \
     python3 -c "$SETSID_PY" "$DEMO/sup.pid" .venv/bin/kc-supervisor >"$DEMO/supervisor.log" 2>&1 ) &
 SUP_PID=$(wait_for_pidfile "$DEMO/sup.pid") || { echo "demo supervisor never wrote a pidfile; see $DEMO/supervisor.log"; exit 1; }

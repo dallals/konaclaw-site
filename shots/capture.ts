@@ -13,7 +13,7 @@ function routeFor(s: Shot) {
   if (s.route) return s.route;
   const f = join(DEMO, "data", `conv_${s.conv}.id`);
   if (!existsSync(f)) throw new Error(`missing ${f} — run shots/seed_demo.py first`);
-  return `/chat?conv=${readFileSync(f, "utf8").trim()}`;
+  return `/chat?agent=Kona-AI&conv=${readFileSync(f, "utf8").trim()}`;
 }
 
 const browser = await webkit.launch();
